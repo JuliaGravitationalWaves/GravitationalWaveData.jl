@@ -1,0 +1,15 @@
+/data/*
+!/data/README.md
+*.jld2
+.DS_Store
+examples/validation/output/
+/docs/build/
+/docs/src/generated/
+/docs/src/conventions.md
+.CondaPkg/
+.claude/
+Manifest*.toml
+*.jl.*.cov
+*.jl.cov
+*.jl.mem
+lcov.info

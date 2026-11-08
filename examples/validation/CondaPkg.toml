@@ -1,0 +1,8 @@
+channels = ["conda-forge"]
+
+[deps]
+python = ">=3.10,<3.14"
+numpy = ""
+gwpy = ""
+python-lal = ""
+python-lalsimulation = ""
