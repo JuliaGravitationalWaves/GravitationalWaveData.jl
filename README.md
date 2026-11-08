@@ -55,7 +55,7 @@ peak.time, peak.frequency, peak.snr                           # 1126259462.42, 1
 
 ## Documentation
 
-The [documentation](https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/stable/) has a tutorial for each
+The [documentation](https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/) has a tutorial for each
 module, ending in a reproduction of the GW150914 discovery figure. It also has a
 [conventions page](docs/CONVENTIONS.md) covering normalization and timing conventions,
 and the full API reference. To build it locally, run `julia --project=docs docs/make.jl`.

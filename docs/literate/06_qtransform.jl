@@ -52,7 +52,7 @@ peak
 
 # [`qscan_peak`](@ref) returns the loudest tile as a [`QPeak`](@ref): its GPS `time`, `frequency`,
 # normalized `energy`, `snr = sqrt(2*energy)`, and the `q` of the plane it came from. The search
-# picked out a tile within milliseconds of the known merger time, at a Q close to the ~5.3 value
+# picked out a tile a few tens of milliseconds after this catalogue time, at a Q close to the ~5.3 value
 # independently reported for GW150914 in the literature -- a good sanity check that the multi-Q
 # search is doing something physically sensible, not just numerically self-consistent:
 
@@ -99,7 +99,7 @@ rel_times = grid_times .- gps_merger;
 # log-scaled frequency:
 
 heatmap(rel_times, grid_freqs, energy_grid;
-        xlabel="Time from merger (s)", ylabel="Frequency (Hz)", yscale=:log10,
+        xlabel="Time from GPS 1126259462.4 (s)", ylabel="Frequency (Hz)", yscale=:log10,
         colorbar_title="Normalized energy", color=:viridis,
         title="H1 Q-transform, GW150914 (Q=$(round(peak.q; digits=2)))")
 #-

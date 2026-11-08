@@ -99,3 +99,18 @@ end
         @test_throws ArgumentError psd(white; seglen=nseg, method=:bogus)
     end
 end
+
+@testset "psd leaves out segments with non-finite samples" begin
+    rng = Random.MersenneTwister(12345)
+    dt = 1 / 256
+    data = randn(rng, 256 * 256)
+    gapped = copy(data)
+    gapped[1:(256 * 16)] .= NaN
+    clean_part = TimeSeries(data[(256 * 16 + 1):end], 16.0, dt)
+    expected = psd(clean_part; seglen=256 * 4, overlap=0.0)
+    result = @test_logs (:warn, r"left out 4 of 64 segments") psd(TimeSeries(gapped, 0.0, dt); seglen=256 * 4, overlap=0.0)
+    @test result.data == expected.data
+    mean_result = @test_logs (:warn,) psd(TimeSeries(gapped, 0.0, dt); seglen=256 * 4, overlap=0.0, method=:mean)
+    @test all(isfinite, mean_result.data)
+    @test_throws ArgumentError psd(TimeSeries(fill(NaN, 1024), 0.0, dt); seglen=256)
+end

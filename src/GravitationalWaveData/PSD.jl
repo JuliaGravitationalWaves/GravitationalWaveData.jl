@@ -64,6 +64,10 @@ approximates). `method=:mean` skips both the median and the bias correction.
 Normalization is the standard density convention (`scipy.signal.welch`'s `scaling="density"`):
 `∫psd(f) df` over `[0, Nyquist]` approximates the time series' variance.
 
+Segments containing any non-finite sample are left out of the average, with a warning, since GWOSC
+files mark gaps with `NaN` and one such segment would otherwise make every bin `NaN`. An
+`ArgumentError` is thrown if no segment is finite.
+
 Returns a `FrequencySeries` with `f0=0.0`, `df=1/(seglen*dt)`, real-valued data.
 """
 function psd(ts::TimeSeries{T}; seglen::Int, overlap::Real=0.5,
@@ -71,7 +75,12 @@ function psd(ts::TimeSeries{T}; seglen::Int, overlap::Real=0.5,
     data = ts.data
     dt = ts.dt
     n = length(data)
-    starts = _welch_starts(n, seglen, overlap)
+    all_starts = _welch_starts(n, seglen, overlap)
+    starts = [s for s in all_starts if all(isfinite, @view(data[s:(s + seglen - 1)]))]
+    isempty(starts) && throw(ArgumentError("psd: all $(length(all_starts)) segments contain non-finite samples"))
+    if length(starts) < length(all_starts)
+        @warn "psd: left out $(length(all_starts) - length(starts)) of $(length(all_starts)) segments containing non-finite samples"
+    end
     win, win_power = _welch_window(seglen)
 
     freqs = FFTW.rfftfreq(seglen, 1 / dt)
