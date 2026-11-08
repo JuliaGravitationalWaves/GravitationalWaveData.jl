@@ -1,5 +1,5 @@
 using Test
-using GWData
+using GravitationalWaveData
 using DSP: filt, Butterworth, Lowpass, digitalfilter
 using FFTW: rfft
 using Random
@@ -161,14 +161,14 @@ end
         n = 8 * length(fir) * 4 + 37   # comfortably > 8*length(fir), and not a round multiple
         data = randn(n)
 
-        chunked = GWData.Filtering._overlap_save_convolve(data, fir, :hann)
+        chunked = GravitationalWaveData.Filtering._overlap_save_convolve(data, fir, :hann)
 
         pad = cld(length(fir), 2)
-        w = GWData.Filtering._get_window(:hann, length(fir))
+        w = GravitationalWaveData.Filtering._get_window(:hann, length(fir))
         tapered = copy(data)
         tapered[1:pad] .*= w[1:pad]
         tapered[(end - pad + 1):end] .*= w[(end - pad + 1):end]
-        direct = GWData.Filtering._convolve_same(tapered, fir)
+        direct = GravitationalWaveData.Filtering._convolve_same(tapered, fir)
 
         @test chunked ≈ direct atol=1e-8
     end

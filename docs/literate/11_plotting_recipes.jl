@@ -1,22 +1,22 @@
 # # Plotting Recipes
 #
-# GWData.jl's plotting support uses `RecipesBase.jl`'s `@recipe` macro, defined once per type in
-# `ext/GWDataRecipesBaseExt.jl`. A `@recipe function plot(ts::TimeSeries)` block is really just a
+# GravitationalWaveData.jl's plotting support uses `RecipesBase.jl`'s `@recipe` macro, defined once per type in
+# `ext/GravitationalWaveDataRecipesBaseExt.jl`. A `@recipe function plot(ts::TimeSeries)` block is really just a
 # method of `RecipesBase.apply_recipe` reached via multiple dispatch — when a `RecipesBase`-backed
 # plotting package (`Plots.jl` here) sees `plot(ts)` and `ts` isn't already a type it knows how to
 # draw, it asks `RecipesBase` whether any recipe applies, and ours fires. The recipe's job is just
 # to (1) set some default plot attributes and (2) hand back the `(x, y)` (or `(x, y, z)`) data to
 # actually plot — nothing about `TimeSeries`/`FrequencySeries`/`Spectrogram` needs to know about
-# plotting at all. That's also why this only works once a plotting package is loaded: `GWData`
-# itself has no hard dependency on `Plots.jl`, `ext/GWDataRecipesBaseExt.jl` is a package
-# *extension* that only compiles once both `GWData` and `RecipesBase` are present in the session
+# plotting at all. That's also why this only works once a plotting package is loaded: `GravitationalWaveData`
+# itself has no hard dependency on `Plots.jl`, `ext/GravitationalWaveDataRecipesBaseExt.jl` is a package
+# *extension* that only compiles once both `GravitationalWaveData` and `RecipesBase` are present in the session
 # (see that file's own header comment).
 #
-# This tutorial works directly from `ext/GWDataRecipesBaseExt.jl`'s source: what each recipe's
+# This tutorial works directly from `ext/GravitationalWaveDataRecipesBaseExt.jl`'s source: what each recipe's
 # defaults are, how to override them, and how they compose with the rest of `Plots.jl` (multi-panel
 # layouts, plain `Plots.jl` primitives like `vline!`).
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -52,7 +52,7 @@ spec = spectrogram(spec_zoom)
 # ## 1. Plain defaults
 #
 # With no keyword arguments at all, each recipe's own defaults apply. Reading
-# `ext/GWDataRecipesBaseExt.jl`:
+# `ext/GravitationalWaveDataRecipesBaseExt.jl`:
 #
 # - **`TimeSeries`**: `seriestype --> :path`, linear-linear axes, `xlabel --> "GPS Time (s)"`,
 #   `ylabel --> "Amplitude"`, `label` taken from `ts.name` if set.
@@ -132,7 +132,7 @@ p_good.subplots[1][:yaxis][:guide]
 
 # ## 3. Multi-panel layouts
 #
-# GWData.jl's recipes hand back plain `(x, y)`/`(x, y, z)` data plus attribute defaults, so
+# GravitationalWaveData.jl's recipes hand back plain `(x, y)`/`(x, y, z)` data plus attribute defaults, so
 # multi-panel figures are exactly ordinary `Plots.jl` `layout=` composition — no special support
 # needed on the recipe side. Building each panel as its own `Plot` object first (each `;`-suppressed
 # so it isn't displayed on its own — see the note below), then combining with `layout=`:
@@ -156,10 +156,10 @@ plot(plot(spec_zoom; color=:black, ylabel="Strain", title="H1 strain (time domai
 
 # ## 4. Composing with plain `Plots.jl` primitives
 #
-# Because a GWData.jl recipe plot is an ordinary `Plots.jl` `Plot` object once built, everything
+# Because a GravitationalWaveData.jl recipe plot is an ordinary `Plots.jl` `Plot` object once built, everything
 # else in the `Plots.jl` API — `vline!`, `hline!`, `annotate!`, `scatter!`, and so on — works on it
 # completely normally. The recipe system is not a closed box: it only ever runs once, at the initial
-# `plot(...)`/`plot!(...)` call for a GWData.jl series; anything added afterward is just standard
+# `plot(...)`/`plot!(...)` call for a GravitationalWaveData.jl series; anything added afterward is just standard
 # `Plots.jl`.
 #
 # Marking the GW150914 merger time on the time-domain zoom plot:

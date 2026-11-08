@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's `spectrogram` against gwpy's `TimeSeries.spectrogram2` -- the raw,
+# Compare GravitationalWaveData.jl's `spectrogram` against gwpy's `TimeSeries.spectrogram2` -- the raw,
 # non-averaged STFT spectrogram (one windowed FFT per segment; NOT gwpy's plain
 # `TimeSeries.spectrogram`, which Welch/median-averages several sub-segments per column -- see
-# src/GWData/Spectrogram.jl's module docstring for why `spectrogram2` is the correct analogue of
+# src/GravitationalWaveData/Spectrogram.jl's module docstring for why `spectrogram2` is the correct analogue of
 # what `DSP.spectrogram` computes) -- on the same real GW150914 H1 strain segment.
 #
 # Usage (see README.md in this directory):
@@ -27,7 +27,7 @@ const SEG_END = TRIGGER_TIME + 4.0
 # (nfft, noverlap) grid, it does a *second* pass that re-averages each output column from its
 # `density = nfft / (nfft - noverlap)` overlapping neighbors, weighted by a triangular window
 # (`get_window("triangle", density)`). That is real cross-column smoothing `DSP.spectrogram` (and
-# hence `GWData.spectrogram`) does not do -- it wraps
+# hence `GravitationalWaveData.spectrogram`) does not do -- it wraps
 # `DSP.spectrogram`, a raw per-segment STFT, not gwpy's own further-smoothed variant. With
 # noverlap=0, density=1 and `get_window("triangle", 1) == [1.0]`, so that second pass is exactly a
 # no-op and gwpy's output reduces to the same raw one-FFT-per-segment computation
@@ -58,29 +58,29 @@ py_freqs = read_vec(gwpy_prefix * "_freqs.csv")
 py_times = read_vec(gwpy_prefix * "_times.csv")
 py_power = read_power_csv(gwpy_prefix * "_power.csv")
 
-@assert size(gw_power) == size(py_power) "Shape mismatch: GWData=$(size(gw_power)) gwpy=$(size(py_power))"
+@assert size(gw_power) == size(py_power) "Shape mismatch: GravitationalWaveData=$(size(gw_power)) gwpy=$(size(py_power))"
 @assert isapprox(gw_freqs, py_freqs; atol=1e-6) "Frequency grids don't match bin-for-bin"
 
-# Time axis convention differs by design: DSP.spectrogram (and hence GWData.spectrogram) labels
+# Time axis convention differs by design: DSP.spectrogram (and hence GravitationalWaveData.spectrogram) labels
 # each column with its segment's *center* GPS time, while gwpy's spectrogram2 labels each column
 # with its segment's *start* GPS time (see compare_spectrogram_gwpy_step.jl's header and
-# src/GWData/Spectrogram.jl's `spectrogram` docstring) -- a constant offset of n/(2*fs), not a
+# src/GravitationalWaveData/Spectrogram.jl's `spectrogram` docstring) -- a constant offset of n/(2*fs), not a
 # bug. Verify that offset is exactly what's expected rather than silently ignoring the difference.
 const NATIVE_FS = 4096.0   # GW150914 H1 LOSC strain's native sample rate
 expected_offset = N / (2 * NATIVE_FS)
 time_offsets = gw_times .- py_times
-@assert isapprox(time_offsets, fill(time_offsets[1], length(time_offsets)); atol=1e-9) "Time offset between GWData and gwpy columns isn't constant"
+@assert isapprox(time_offsets, fill(time_offsets[1], length(time_offsets)); atol=1e-9) "Time offset between GravitationalWaveData and gwpy columns isn't constant"
 
 band = findall(f -> 20.0 <= f <= 1024.0, gw_freqs)
 rel_diff = abs.(gw_power[band, :] .- py_power[band, :]) ./ py_power[band, :]
 
-println("Comparing GWData.spectrogram vs gwpy TimeSeries.spectrogram2, same H1 segment straddling the GW150914 trigger")
+println("Comparing GravitationalWaveData.spectrogram vs gwpy TimeSeries.spectrogram2, same H1 segment straddling the GW150914 trigger")
 println("  segment: GPS [$SEG_START, $SEG_END) ($(SEG_END - SEG_START)s)")
 println("  n=$N samples (fftlength=$(N/4096)s), noverlap=$NOVERLAP (0% -- see header comment: gwpy's spectrogram2 does extra triangular cross-column smoothing whenever noverlap>0, which DSP.spectrogram doesn't and isn't asked to replicate), window=hann (peak-centered, DSP.Windows.hanning's default -- see Spectrogram.jl's spectrogram docstring for why zerophase=true is the wrong choice here despite scipy calling its own convention \"periodic\")")
 println("  spectrogram shape: $(size(gw_power)) (nfreq x ntime)")
 println("  frequency points compared per column: $(length(band)) (20-1024 Hz band)")
 println()
-println("Time-bin labeling convention check (segment-center [GWData] vs segment-start [gwpy]):")
+println("Time-bin labeling convention check (segment-center [GravitationalWaveData] vs segment-start [gwpy]):")
 println("  constant offset between the two time axes = $(time_offsets[1]) s")
 println("  expected offset (n/2 samples = $(N/2/4096) s)  = $expected_offset s")
 println()
@@ -98,5 +98,5 @@ println("Spot check at a few frequencies, middle time column ($(gw_times[mid_col
 for f in (20.0, 50.0, 100.0, 150.0, 200.0, 300.0, 500.0, 1000.0)
     idx = argmin(abs.(gw_freqs .- f))
     gv, pv = gw_power[idx, mid_col], py_power[idx, mid_col]
-    println("  f=$(gw_freqs[idx]) Hz  GWData=$gv  gwpy=$pv  rel_diff=$(abs(gv - pv) / pv)")
+    println("  f=$(gw_freqs[idx]) Hz  GravitationalWaveData=$gv  gwpy=$pv  rel_diff=$(abs(gv - pv) / pv)")
 end

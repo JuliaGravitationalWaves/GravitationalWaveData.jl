@@ -4,5 +4,5 @@ The `TimeSeries`, `FrequencySeries` and `Spectrogram` types, GWOSC and frame-fil
 cache, and published posterior samples.
 
 ```@autodocs
-Modules = [GWData, GWData.Types, GWData.GWOSC, GWData.Posteriors, GWData.GWF]
+Modules = [GravitationalWaveData, GravitationalWaveData.Types, GravitationalWaveData.GWOSC, GravitationalWaveData.Posteriors, GravitationalWaveData.GWF]
 ```

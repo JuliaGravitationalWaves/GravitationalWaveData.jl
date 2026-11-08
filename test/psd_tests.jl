@@ -1,12 +1,12 @@
 using Test
-using GWData
+using GravitationalWaveData
 using DSP
 using Random
 using Statistics: var, median
 
 @testset "DSP.jl window cross-check vs hand-rolled reference" begin
     # Closed-form symmetric Hann and Tukey (tapered-cosine) definitions, checked against the
-    # DSP.Windows.hanning/tukey conventions used in src/GWData/PSD.jl and src/GWData/IO/GWOSC.jl.
+    # DSP.Windows.hanning/tukey conventions used in src/GravitationalWaveData/PSD.jl and src/GravitationalWaveData/IO/GWOSC.jl.
     ref_hann(N) = [0.5 * (1 - cos(2pi * n / (N - 1))) for n in 0:(N - 1)]
     function ref_tukey(N::Int, alpha::Real)
         alpha <= 0 && return ones(Float64, N)

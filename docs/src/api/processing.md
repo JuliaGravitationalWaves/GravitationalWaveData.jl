@@ -3,5 +3,5 @@
 Butterworth and notch filters, whitening, and polyphase resampling.
 
 ```@autodocs
-Modules = [GWData.Filtering, GWData.Resample]
+Modules = [GravitationalWaveData.Filtering, GravitationalWaveData.Resample]
 ```

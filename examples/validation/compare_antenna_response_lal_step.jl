@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_antenna_response.jl (see README.md): writes
 # lal.CachedDetectors' H1/L1/V1 geometry and lal.ComputeDetAMResponse over the same grid. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_antenna_response_lal_step.jl <detectors_csv> <antenna_csv>
 

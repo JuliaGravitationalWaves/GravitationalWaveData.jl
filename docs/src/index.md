@@ -1,4 +1,4 @@
-# GWData.jl
+# GravitationalWaveData.jl
 
 A Julia toolkit for gravitational-wave detector data: `TimeSeries`/`FrequencySeries`/`Spectrogram`
 types, GWOSC and frame-file I/O, PSD/ASD estimation, filtering and whitening, resampling,
@@ -24,5 +24,5 @@ coherence, built on `DSP.jl` and `FFTW.jl`.
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/paulhopkins/GWData.jl")
+Pkg.add("GravitationalWaveData")
 ```

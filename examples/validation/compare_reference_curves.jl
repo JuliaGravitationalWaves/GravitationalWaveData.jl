@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's aligo_design_psd/avirgo_design_psd (src/GWData/ReferenceCurves.jl, ported
+# Compare GravitationalWaveData.jl's aligo_design_psd/avirgo_design_psd (src/GravitationalWaveData/ReferenceCurves.jl, ported
 # from LALSimulation's XLALSimNoisePSDaLIGOZeroDetHighPower/XLALSimNoisePSDAdvVirgo) against
 # lalsimulation.SimNoisePSDaLIGOZeroDetHighPower/lalsimulation.SimNoisePSDAdvVirgo, across a
 # frequency grid spanning the band these curves are meant for (10-2048 Hz), plus a couple of
@@ -51,7 +51,7 @@ function report(label, f, a, b)
         reldiff = absdiff / abs(b[i])
         maxabs = max(maxabs, absdiff)
         maxrel = max(maxrel, reldiff)
-        println("  f=$(f[i])  GWData=$(a[i])  lal=$(b[i])  rel_diff=$reldiff")
+        println("  f=$(f[i])  GravitationalWaveData=$(a[i])  lal=$(b[i])  rel_diff=$reldiff")
     end
     println("  max absolute difference: $maxabs")
     println("  max relative difference: $maxrel")
@@ -59,7 +59,7 @@ function report(label, f, a, b)
     return maxrel
 end
 
-println("Comparing GWData.jl's reference design PSDs vs lalsimulation, $(length(FREQS)) frequencies")
+println("Comparing GravitationalWaveData.jl's reference design PSDs vs lalsimulation, $(length(FREQS)) frequencies")
 println()
 rel_ligo = report("aLIGO zero-detuning high-power PSD", gwdata_f, gwdata_aligo, lal_aligo)
 rel_virgo = report("AdvVirgo PSD", gwdata_f, gwdata_avirgo, lal_avirgo)

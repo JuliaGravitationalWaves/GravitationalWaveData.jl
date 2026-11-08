@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_time_delay.jl (see README.md): writes
 # lal.TimeDelayFromEarthCenter over the same grid to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_time_delay_lal_step.jl <delay_csv>
 

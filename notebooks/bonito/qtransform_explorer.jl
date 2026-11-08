@@ -1,6 +1,6 @@
-# GWData.jl Bonito notebook: Q-transform explorer
+# GravitationalWaveData.jl Bonito notebook: Q-transform explorer
 #
-# Bonito.jl counterpart of `../pluto/qtransform_explorer.jl`. Interactively explore GWData.jl's
+# Bonito.jl counterpart of `../pluto/qtransform_explorer.jl`. Interactively explore GravitationalWaveData.jl's
 # constant-Q transform (`q_plane_transform`) on the GW150914 H1 segment. Adjust **Q**, the
 # frequency search band (**low**/**high**), and whether the segment is whitened first, and watch
 # the time-frequency energy map (the "Q-scan"/"chirp plot") update live.
@@ -18,14 +18,14 @@
 import Pkg
 Pkg.activate(@__DIR__)
 
-using GWData, Plots, Bonito, Base64
+using GravitationalWaveData, Plots, Bonito, Base64
 import Bonito.TailwindDashboard as D
 
 gr()
 
 # --- Fetching real strain data ---
 # The same standard GW150914 H1 segment the rest of this project's tutorials use, fetched live
-# from GWOSC via `fetch_open_data` (cached locally under `~/.cache/gwdata/strain`, so
+# from GWOSC via `fetch_open_data` (cached locally under `~/.cache/gravitationalwavedata/strain`, so
 # re-running this notebook doesn't re-download the file). Cropped to 16 s centered on the
 # merger, same as `docs/literate/06_qtransform.jl`.
 const gps_start, gps_end = 1126256640, 1126260736

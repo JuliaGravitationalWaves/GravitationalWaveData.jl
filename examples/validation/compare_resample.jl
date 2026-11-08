@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's `resample` against gwpy's `TimeSeries.resample()`, on the same real
+# Compare GravitationalWaveData.jl's `resample` against gwpy's `TimeSeries.resample()`, on the same real
 # GW150914 H1 strain segment (downsampling 4096 Hz -> 2048 Hz, the standard halving used in LIGO
 # parameter-estimation pipelines).
 #
@@ -45,7 +45,7 @@ end
 gwdata_freqs, gwdata_psd = read_psd_csv(gwdata_csv)
 gwpy_freqs, gwpy_psd = read_psd_csv(gwpy_csv)
 
-@assert length(gwpy_freqs) == length(gwdata_freqs) "Frequency grid length mismatch: gwpy=$(length(gwpy_freqs)) GWData=$(length(gwdata_freqs))"
+@assert length(gwpy_freqs) == length(gwdata_freqs) "Frequency grid length mismatch: gwpy=$(length(gwpy_freqs)) GravitationalWaveData=$(length(gwdata_freqs))"
 @assert isapprox(gwpy_freqs, gwdata_freqs; atol=1e-6) "Frequency grids don't match bin-for-bin"
 
 # Compare 20 Hz up to 80% of the new Nyquist (2048/2 = 1024 Hz): the anti-aliasing filters' roll-
@@ -55,7 +55,7 @@ new_nyquist = NEW_RATE / 2
 band = findall(f -> 20.0 <= f <= 0.8 * new_nyquist, gwdata_freqs)
 rel_diff = abs.(gwdata_psd[band] .- gwpy_psd[band]) ./ gwpy_psd[band]
 
-println("Comparing GWData.jl's resample(seg, $(NEW_RATE)) vs gwpy's TimeSeries.resample($(NEW_RATE))")
+println("Comparing GravitationalWaveData.jl's resample(seg, $(NEW_RATE)) vs gwpy's TimeSeries.resample($(NEW_RATE))")
 println("  segment: GPS [$SEG_START, $SEG_END) ($(SEG_END - SEG_START)s), original rate 4096 Hz")
 println("  PSD of resampled series: seglen=4.0s, overlap=50%, method=welch (mean), window=hann")
 println("  frequency points compared: $(length(band)) (20-$(0.8 * new_nyquist) Hz band)")
@@ -79,5 +79,5 @@ println("cross-validation (median ~0.1-0.5%).")
 println()
 for f in (20.0, 50.0, 100.0, 200.0, 300.0, 500.0, 700.0, 800.0)
     idx = argmin(abs.(gwdata_freqs .- f))
-    println("  f=$(gwdata_freqs[idx]) Hz  GWData=$(gwdata_psd[idx])  gwpy=$(gwpy_psd[idx])  rel_diff=$(abs(gwdata_psd[idx]-gwpy_psd[idx])/gwpy_psd[idx])")
+    println("  f=$(gwdata_freqs[idx]) Hz  GravitationalWaveData=$(gwdata_psd[idx])  gwpy=$(gwpy_psd[idx])  rel_diff=$(abs(gwdata_psd[idx]-gwpy_psd[idx])/gwpy_psd[idx])")
 end

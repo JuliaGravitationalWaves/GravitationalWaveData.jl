@@ -2,23 +2,23 @@
 #
 # Gravitational-wave pipelines timestamp everything in **GPS seconds** rather than UTC, and track
 # "when was the detector taking good data" with half-open **segments**, not individual timestamps.
-# This tutorial covers both corners of `GWData.jl`: [`GPSTime`](@ref GWData.gps_to_utc) for
-# converting between the two time systems, and [`Segments`](@ref GWData.Segment) for building and
+# This tutorial covers both corners of `GravitationalWaveData.jl`: [`GPSTime`](@ref GravitationalWaveData.gps_to_utc) for
+# converting between the two time systems, and [`Segments`](@ref GravitationalWaveData.Segment) for building and
 # combining data-availability intervals.
 #
-# `GWData.jl` doesn't fetch data-quality segments over the network, so the example builds a
+# `GravitationalWaveData.jl` doesn't fetch data-quality segments over the network, so the example builds a
 # small, hand-crafted "instrument locked" scenario instead: it runs instantly, offline, and shows
 # the segment algebra (`union`, `intersect`, `gaps`) used to find, for example, double-coincident
 # observing time.
 
-using GWData
+using GravitationalWaveData
 using Dates
 
 # ## Part 1: GPS time <-> UTC
 #
 # GPS time is a continuous SI-second count from the GPS epoch (1980-01-06T00:00:00 UTC) with **no**
-# leap seconds inserted after that epoch, unlike UTC. `GWData.jl` converts between the two via a
-# real historical leap-second table (see `docs/CONVENTIONS.md` and `src/GWData/GPSTime.jl` for the
+# leap seconds inserted after that epoch, unlike UTC. `GravitationalWaveData.jl` converts between the two via a
+# real historical leap-second table (see `docs/CONVENTIONS.md` and `src/GravitationalWaveData/GPSTime.jl` for the
 # full rationale) rather than a single hardcoded offset, since that offset has changed 18 times
 # since 1980 and will change again whenever IERS announces a new leap second.
 #

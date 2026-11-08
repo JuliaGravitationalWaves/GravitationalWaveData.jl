@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_gmst.jl (see README.md): computes
 # lal.GreenwichMeanSiderealTime at each given GPS time and writes it to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_gmst_lal_step.jl <out_csv> <gps1> <gps2> ...
 

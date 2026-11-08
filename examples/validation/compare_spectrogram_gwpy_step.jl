@@ -2,7 +2,7 @@
 # Reference side of compare_spectrogram.jl (see README.md): computes gwpy's
 # non-averaged power spectrogram (`TimeSeries.spectrogram2`) over the same segment and writes
 # its frequency axis, GPS time axis and power matrix to CSVs. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_spectrogram_gwpy_step.jl <h1_path> <seg_start> <seg_end> <n> <noverlap> <out_prefix>
 
@@ -24,12 +24,12 @@ fs = pyconvert(Float64, py_seg.sample_rate.to("Hz").value)
 fftlength = n / fs
 overlap = noverlap / fs
 
-# `detrend=false`: GWData.spectrogram (via DSP.spectrogram) does not remove each segment's mean
+# `detrend=false`: GravitationalWaveData.spectrogram (via DSP.spectrogram) does not remove each segment's mean
 # before the FFT, but scipy.signal.periodogram (which spectrogram2 calls per-segment) defaults to
-# `detrend="constant"` (mean removal) -- match GWData's convention explicitly rather than
+# `detrend="constant"` (mean removal) -- match GravitationalWaveData's convention explicitly rather than
 # comparing two different conventions. `window="hann"`: gwpy's TimeSeries.spectrogram2 default;
 # scipy.signal.get_window peak-centers this window in the middle of the segment, matching
-# GWData.spectrogram's own default (DSP.Windows.hanning(n), i.e. `zerophase=false` -- NOT
+# GravitationalWaveData.spectrogram's own default (DSP.Windows.hanning(n), i.e. `zerophase=false` -- NOT
 # `zerophase=true`, which centers the window's peak at index 1 instead, a different
 # zero-phase-filter-kernel convention; see Spectrogram.jl's `spectrogram` docstring for how this
 # was found by numerically cross-checking a single segment against a from-scratch reference).

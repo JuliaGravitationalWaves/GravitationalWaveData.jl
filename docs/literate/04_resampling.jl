@@ -6,10 +6,10 @@
 # Hz to a couple kHz), or **upsampling** to bring several detectors/pipelines onto a common grid.
 # This tutorial demonstrates [`resample`](@ref) -- a genuine port of `DSP.jl`'s polyphase FIR
 # resampler, already configured with GW-appropriate anti-aliasing behavior by default (see
-# `src/GWData/Resample.jl`'s module docstring) -- and shows, via a before/after ASD comparison,
+# `src/GravitationalWaveData/Resample.jl`'s module docstring) -- and shows, via a before/after ASD comparison,
 # that resampling doesn't introduce aliasing artifacts below the new Nyquist frequency.
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -30,7 +30,7 @@ sample_rate(strain), duration(strain)
 # stopband attenuation) and compensates for that filter's own group delay, so the output stays
 # time-aligned with the input -- `resample` doesn't need to add anything on top of what
 # `DSP.resample` already provides to be GW-appropriate (see the module docstring in
-# `src/GWData/Resample.jl` for the full detail, including the exact-integer-ratio vs.
+# `src/GravitationalWaveData/Resample.jl` for the full detail, including the exact-integer-ratio vs.
 # arbitrary-ratio code paths). Since both the current and requested rates are exact integers here,
 # it takes DSP's exact-ratio polyphase path rather than the approximate arbitrary-ratio path.
 

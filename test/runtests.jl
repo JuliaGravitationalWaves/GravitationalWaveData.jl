@@ -1,15 +1,21 @@
 using Test
-using GWData
+using GravitationalWaveData
 using Aqua
 using Statistics
 
 include("testdata.jl")
 
 @testset "Code quality (Aqua.jl)" begin
-    Aqua.test_all(GWData)
+    Aqua.test_all(GravitationalWaveData)
 end
 
-@testset "GWData.jl" begin
+@testset "Renamed environment variables are refused" begin
+    old = "GW" * "DATA_CACHE_DIR"
+    @test_throws "GRAVITATIONALWAVEDATA_CACHE_DIR" GravitationalWaveData._check_renamed_env(Dict(old => "x"))
+    @test GravitationalWaveData._check_renamed_env(Dict("GW" * "DATA_ENV" => "x")) === nothing
+end
+
+@testset "GravitationalWaveData.jl" begin
     @testset "TimeSeries construction" begin
         ts = TimeSeries([1.0, 2.0, 3.0, 4.0], 100.0, 0.5)
         @test length(ts) == 4

@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Cross-validate GWData.jl's bandpass/highpass/lowpass/whiten against gwpy on the same real
+# Cross-validate GravitationalWaveData.jl's bandpass/highpass/lowpass/whiten against gwpy on the same real
 # GW150914 H1 strain segment.
 #
 # bandpass/highpass/lowpass caveat (see Filtering.jl's module docstring for the full rationale):
@@ -27,7 +27,7 @@ const H1_PATH = gw150914_strain_path("H1")
 println("Step 1/2: gwpy (asd + bandpass/highpass/lowpass/whiten)...")
 run_reference_step("compare_filtering_gwpy_step.jl", H1_PATH, OUT_DIR)
 
-println("Step 2/2: GWData.jl (bandpass/highpass/lowpass/whiten)...")
+println("Step 2/2: GravitationalWaveData.jl (bandpass/highpass/lowpass/whiten)...")
 run_gwdata_step("compare_filtering_gwdata_step.jl", H1_PATH, OUT_DIR)
 
 function read_csv(path)

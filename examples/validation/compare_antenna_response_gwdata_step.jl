@@ -1,11 +1,11 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_antenna_response.jl (see README.md): writes the H1/L1/V1
+# GravitationalWaveData.jl side of compare_antenna_response.jl (see README.md): writes the H1/L1/V1
 # geometry (location + response tensor) and `compute_antenna_response` over a grid of
 # (ra, dec, psi, gps) points to CSVs.
 #
-# Usage: julia --project=<GWData.jl root> compare_antenna_response_gwdata_step.jl <detectors_csv> <antenna_csv>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_antenna_response_gwdata_step.jl <detectors_csv> <antenna_csv>
 
-using GWData: H1, L1, V1, compute_antenna_response, geometry
+using GravitationalWaveData: H1, L1, V1, compute_antenna_response, geometry
 
 detectors_csv, antenna_csv = ARGS
 

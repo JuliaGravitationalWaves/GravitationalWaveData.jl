@@ -1,5 +1,5 @@
 using Test
-using GWData
+using GravitationalWaveData
 
 # ================================================================================================
 # Reference ASD/PSD design-sensitivity curves (aLIGO zero-detuning-high-power, AdvVirgo).

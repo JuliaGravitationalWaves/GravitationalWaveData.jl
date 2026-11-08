@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+type: software
+title: "GravitationalWaveData.jl"
+abstract: "Gravitational-wave detector data toolkit: TimeSeries/FrequencySeries types, GWOSC and frame-file I/O, PSD/ASD estimation, filtering and whitening, spectrograms, Q-transforms, and detector response."
+authors:
+  - family-names: "Hopkins"
+    given-names: "Paul"
+    affiliation: "Independent Researcher, Forest of Dean, UK"
+version: "0.1.0"
+license: MIT
+repository-code: "https://github.com/JuliaGravitationalWaves/GravitationalWaveData.jl"
+url: "https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/stable/"
+keywords:
+  - gravitational waves
+  - Julia
+  - signal processing
+  - GWOSC

@@ -1,4 +1,4 @@
-# Tests for the GWF (IGWD frame) reader in `src/GWData/IO/GWF.jl`.
+# Tests for the GWF (IGWD frame) reader in `src/GravitationalWaveData/IO/GWF.jl`.
 #
 # Primary validation: a real GWOSC frame file, `H-H1_LOSC_4_V1-1126256640-4096.gwf` (see
 # `data/README.md` for how to obtain it), covering the same GPS segment (1126256640, 4096s, H1,
@@ -13,22 +13,22 @@
         # _read_string on a small hand-built buffer: STRING = INT_2U length (incl. trailing '\0')
         # + that many bytes of ASCII ending in '\0'. Independent of any real/synthetic frame file.
         buf = UInt8[0x04, 0x00, UInt8('a'), UInt8('b'), UInt8('c'), 0x00, 0xFF]
-        s, p = GWData.GWF._read_string(buf, 1)
+        s, p = GravitationalWaveData.GWF._read_string(buf, 1)
         @test s == "abc"
         @test p == 7   # consumed 2 (length prefix) + 4 (3 chars + null) = 6 bytes, next pos = 7
         @test buf[p] == 0xFF   # byte after the string untouched
 
         # FrVect type-code -> Julia type table (LIGO-T970130 Appendix C), spot-checked against
         # the codes actually seen in the real file below (type=2 for STRAIN, type=4 for the masks).
-        @test GWData.GWF._FRVECT_ELTYPE[0x0002] == Float64
-        @test GWData.GWF._FRVECT_ELTYPE[0x0004] == Int32
+        @test GravitationalWaveData.GWF._FRVECT_ELTYPE[0x0002] == Float64
+        @test GravitationalWaveData.GWF._FRVECT_ELTYPE[0x0004] == Int32
 
         # Raw (uncompressed) round trip through _decompress_frvect.
         raw = reinterpret(UInt8, Float64[1.0, 2.0, 3.0]) |> collect
-        @test GWData.GWF._decompress_frvect(raw, 256, Float64, 3) == [1.0, 2.0, 3.0]
+        @test GravitationalWaveData.GWF._decompress_frvect(raw, 256, Float64, 3) == [1.0, 2.0, 3.0]
 
         # An unimplemented compression scheme errors clearly rather than misreading data.
-        @test_throws ArgumentError GWData.GWF._decompress_frvect(UInt8[1, 2, 3, 4], 261, Int16, 2)
+        @test_throws ArgumentError GravitationalWaveData.GWF._decompress_frvect(UInt8[1, 2, 3, 4], 261, Int16, 2)
     end
 
     if !isfile(gwf_path)

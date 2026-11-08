@@ -4,5 +4,5 @@ Detector geometry, antenna response, arrival-time delays, and the aLIGO/Advanced
 sensitivity curves.
 
 ```@autodocs
-Modules = [GWData.Detectors, GWData.ReferenceCurves]
+Modules = [GravitationalWaveData.Detectors, GravitationalWaveData.ReferenceCurves]
 ```

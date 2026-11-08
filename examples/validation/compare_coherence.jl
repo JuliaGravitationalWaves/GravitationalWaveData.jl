@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's `csd`/`coherence` against gwpy's `TimeSeries.csd()`/`.coherence()`, using a
+# Compare GravitationalWaveData.jl's `csd`/`coherence` against gwpy's `TimeSeries.csd()`/`.coherence()`, using a
 # genuine two-channel case: real H1 and L1 GW150914 strain over the same off-source GPS window.
 # A synthetic or self-coherence case would be a much weaker check.
 #
@@ -49,7 +49,7 @@ end
 gwdata_freqs, gwdata_re, gwdata_im, gwdata_coh = read_csv(gwdata_csv)
 gwpy_freqs, gwpy_re, gwpy_im, gwpy_coh = read_csv(gwpy_csv)
 
-@assert length(gwpy_freqs) == length(gwdata_freqs) "Frequency grid length mismatch: gwpy=$(length(gwpy_freqs)) GWData=$(length(gwdata_freqs))"
+@assert length(gwpy_freqs) == length(gwdata_freqs) "Frequency grid length mismatch: gwpy=$(length(gwpy_freqs)) GravitationalWaveData=$(length(gwdata_freqs))"
 @assert isapprox(gwpy_freqs, gwdata_freqs; atol=1e-6) "Frequency grids don't match bin-for-bin"
 
 band = findall(f -> 20.0 <= f <= 1024.0, gwdata_freqs)
@@ -60,7 +60,7 @@ csd_rel_diff = abs.(gwdata_csd_mag .- gwpy_csd_mag) ./ gwpy_csd_mag
 
 coh_abs_diff = abs.(gwdata_coh[band] .- gwpy_coh[band])
 
-println("Comparing GWData.jl's `csd`/`coherence` vs gwpy TimeSeries.csd/coherence, real H1 vs L1")
+println("Comparing GravitationalWaveData.jl's `csd`/`coherence` vs gwpy TimeSeries.csd/coherence, real H1 vs L1")
 println("  off-source window: GPS [$off_source_start, $off_source_end) ($(CSD_SEGMENT)s)")
 println("  seglen = $DURATION s, overlap = 50%, window = hann, average = mean")
 println("  frequency points compared: $(length(band)) (20-1024 Hz band)")
@@ -73,11 +73,11 @@ println("Coherence absolute difference (in-band, coherence itself is in [0,1]):"
 println("  median = $(sort(coh_abs_diff)[length(coh_abs_diff)÷2])")
 println("  max    = $(maximum(coh_abs_diff))")
 println("  mean gwpy coherence in-band   = $(sum(gwpy_coh[band]) / length(band))")
-println("  mean GWData coherence in-band = $(sum(gwdata_coh[band]) / length(band))")
+println("  mean GravitationalWaveData coherence in-band = $(sum(gwdata_coh[band]) / length(band))")
 println()
 for f in (20.0, 50.0, 100.0, 150.0, 200.0, 300.0, 500.0, 1000.0)
     idx = argmin(abs.(gwdata_freqs .- f))
     println("  f=$(gwdata_freqs[idx]) Hz  " *
-            "GWData csd=$(gwdata_re[idx])+$(gwdata_im[idx])im coh=$(gwdata_coh[idx])  " *
+            "GravitationalWaveData csd=$(gwdata_re[idx])+$(gwdata_im[idx])im coh=$(gwdata_coh[idx])  " *
             "gwpy csd=$(gwpy_re[idx])+$(gwpy_im[idx])im coh=$(gwpy_coh[idx])")
 end

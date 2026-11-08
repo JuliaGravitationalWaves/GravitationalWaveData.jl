@@ -263,7 +263,7 @@ convolve it with the detrended data using the overlap-save method (via
 at the segment edges.
 
 `psd_or_asd` supplies the spectrum to whiten against, typically from
-[`asd`](@ref GWData.PSD.asd) or [`psd`](@ref GWData.PSD.psd) on an off-source stretch; pass
+[`asd`](@ref GravitationalWaveData.PSD.asd) or [`psd`](@ref GravitationalWaveData.PSD.psd) on an off-source stretch; pass
 `kind=:psd` if you're passing a power (not amplitude) spectral density. It is linearly interpolated onto the frequency grid with spacing
 `1/duration(ts)` before use, so it need not already be sampled at that resolution (e.g. it's fine to
 reuse the same off-source-estimated ASD for whitening several different on-source segments).

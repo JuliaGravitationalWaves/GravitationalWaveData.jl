@@ -1,8 +1,7 @@
 using Documenter
 using Literate
-using Logging
 using Plots
-using GWData
+using GravitationalWaveData
 
 # Show Plots.jl figures in the built docs as PNG files. Documenter uses the first of text/html,
 # SVG and PNG that an @example result offers; a Plots.jl figure offers all three, and for strain
@@ -11,24 +10,6 @@ using GWData
 # the docs build: the tutorials and notebooks themselves are unchanged.
 Base.showable(::MIME"text/html", ::Plots.Plot{Plots.GRBackend}) = false
 Base.showable(::MIME"image/svg+xml", ::Plots.Plot{Plots.GRBackend}) = false
-
-# PlotUtils warns "No strict ticks found" for any axis whose values are below ~1e-15 (e.g. raw
-# strain), because its tick search compares the tick spacing against an absolute `eps`. It then
-# falls back to ordinary ticks, so the figures are fine; drop just that message from the build log
-# so real warnings stand out.
-struct DropStrictTicksWarning <: AbstractLogger
-    inner::AbstractLogger
-end
-Logging.min_enabled_level(l::DropStrictTicksWarning) = Logging.min_enabled_level(l.inner)
-Logging.shouldlog(l::DropStrictTicksWarning, args...) = Logging.shouldlog(l.inner, args...)
-function Logging.handle_message(l::DropStrictTicksWarning, level, message, _module, args...;
-                                kwargs...)
-    level == Logging.Warn && nameof(_module) === :PlotUtils &&
-        message == "No strict ticks found" && return nothing
-    return Logging.handle_message(l.inner, level, message, _module, args...; kwargs...)
-end
-Logging.catch_exceptions(l::DropStrictTicksWarning) = Logging.catch_exceptions(l.inner)
-global_logger(DropStrictTicksWarning(global_logger()))
 
 const DOCS_SRC = joinpath(@__DIR__, "src")
 const LITERATE_DIR = joinpath(@__DIR__, "literate")
@@ -78,14 +59,14 @@ generated_pages = [
     "Capstone: GW150914" => "generated/12_gw150914_capstone.md",
 ]
 
-DocMeta.setdocmeta!(GWData, :DocTestSetup, :(using GWData); recursive=true)
+DocMeta.setdocmeta!(GravitationalWaveData, :DocTestSetup, :(using GravitationalWaveData); recursive=true)
 
 makedocs(;
-    sitename="GWData.jl",
-    modules=[GWData],
+    sitename="GravitationalWaveData.jl",
+    modules=[GravitationalWaveData],
     authors="Paul Hopkins <paul.hopkins256@gmail.com>",
     format=Documenter.HTML(;
-        canonical="https://paulhopkins.github.io/GWData.jl",
+        canonical="https://juliagravitationalwaves.github.io/GravitationalWaveData.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -107,6 +88,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/paulhopkins/GWData.jl",
+    repo="github.com/JuliaGravitationalWaves/GravitationalWaveData.jl",
     devbranch="main",
 )

@@ -226,7 +226,7 @@ end
 #     frequencies, returning a plain vector; or
 #   - `<curve>_design_psd([f0::Real,] df::Real, n::Integer) -> FrequencySeries` -- evaluate on a
 #     uniform grid of `n` bins (matching `FrequencySeries`'s own `(data, [f0,] df)` constructor
-#     convention in src/GWData/Types.jl), returning a `FrequencySeries` directly.
+#     convention in src/GravitationalWaveData/Types.jl), returning a `FrequencySeries` directly.
 #
 # In the `FrequencySeries` form, the DC bin (f=0, only reachable when `f0=0.0`, the default) is
 # set to exactly 0.0 rather than evaluated: both underlying formulas are singular or ill-defined

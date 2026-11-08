@@ -7,12 +7,12 @@
 # recognizable image in gravitational-wave astronomy: the upward-sweeping "chirp" track of GW150914,
 # bottom panel of Figure 1 in Abbott et al. (2016), the discovery paper.
 #
-# [`q_scan`](@ref)/[`q_transform`](@ref)/[`qscan_peak`](@ref) (`src/GWData/QTransform.jl`) implement
+# [`q_scan`](@ref)/[`q_transform`](@ref)/[`qscan_peak`](@ref) (`src/GravitationalWaveData/QTransform.jl`) implement
 # the Omega-pipeline constant-Q transform (Chatterji 2005) with the same tiling, window and indexing
 # conventions as other Omega-derived implementations. Both the individual tile computations and the
 # full GW150914 peak read-out are numerically cross-checked (see the Conventions page).
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -20,7 +20,7 @@ gr()
 #
 # The same standard 4096 s off-source segment covering GW150914 that the rest of this project's
 # tutorials use, fetched live from GWOSC via [`fetch_open_data`](@ref) (cached locally under
-# `~/.cache/gwdata/strain`, so re-running this tutorial doesn't re-download the file):
+# `~/.cache/gravitationalwavedata/strain`, so re-running this tutorial doesn't re-download the file):
 
 gps_start, gps_end = 1126256640, 1126260736
 gps_merger = 1126259462.4   # GW150914 merger GPS time
@@ -106,6 +106,6 @@ heatmap(rel_times, grid_freqs, energy_grid;
 
 # The bright track sweeping upward through frequency, right at the merger time, is the
 # gravitational-wave chirp -- the same feature Figure 1 of Abbott et al. (2016) shows, produced here
-# entirely with GWData.jl. The `12_gw150914_capstone` tutorial builds on this together with
+# entirely with GravitationalWaveData.jl. The `12_gw150914_capstone` tutorial builds on this together with
 # [`bandpass`](@ref)/[`whiten`](@ref) (see `03_filtering_whitening`) to reproduce that
 # discovery-paper figure more fully.

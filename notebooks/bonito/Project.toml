@@ -1,10 +1,10 @@
 [deps]
 Bonito = "824d6782-a2ef-11e9-3a09-e5662e0c26f8"
-GWData = "5720056c-f93d-4cd9-9d37-32622349c792"
+GravitationalWaveData = "d4636edc-8908-4226-933a-005f27205ddf"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 
 [sources]
-GWData = {path = "../.."}
+GravitationalWaveData = {path = "../.."}
 
 [compat]
 Bonito = "5"

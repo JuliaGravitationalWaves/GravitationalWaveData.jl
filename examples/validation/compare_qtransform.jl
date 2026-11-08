@@ -1,11 +1,11 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's `QTransform.q_transform` against gwpy's `gwpy.signal.qtransform.q_scan`
+# Compare GravitationalWaveData.jl's `QTransform.q_transform` against gwpy's `gwpy.signal.qtransform.q_scan`
 # (the function gwpy's own `TimeSeries.q_transform()` calls internally) on the same real GW150914
 # H1 strain segment.
 #
 # Both sides scan the same un-whitened data, so the gwpy side calls the `q_scan` primitive
 # directly rather than the `TimeSeries.q_transform()` wrapper, which whitens by default. Both
-# sides also read the RAW (pre-interpolation) peak -- GWData.jl's `q_transform` stops there by
+# sides also read the RAW (pre-interpolation) peak -- GravitationalWaveData.jl's `q_transform` stops there by
 # design (see the QTransform.jl module docstring on why the spline regridding is presentation-only).
 #
 # Usage (see README.md in this directory):
@@ -45,7 +45,7 @@ end
 gwdata = read_result_csv(gwdata_csv)
 gwpy = read_result_csv(gwpy_csv)
 
-println("Comparing QTransform.q_transform (GWData.jl) vs gwpy.signal.qtransform.q_scan, same H1 segment")
+println("Comparing QTransform.q_transform (GravitationalWaveData.jl) vs gwpy.signal.qtransform.q_scan, same H1 segment")
 println("  segment: GPS [$SEG_START, $SEG_END) (4s around GW150914 trigger $TRIGGER_TIME)")
 println("  frange = ($FMIN, $FMAX) Hz, qrange = (4, 64), mismatch = 0.2, norm = median, no whitening")
 println()
@@ -53,5 +53,5 @@ for field in ("time", "frequency", "energy", "snr", "q")
     gd = gwdata[field]
     gp = gwpy[field]
     reldiff = gp == 0 ? abs(gd - gp) : abs(gd - gp) / abs(gp)
-    println("  $field: GWData=$gd  gwpy=$gp  " * (field == "time" ? "abs_diff=$(abs(gd-gp))s" : "rel_diff=$reldiff"))
+    println("  $field: GravitationalWaveData=$gd  gwpy=$gp  " * (field == "time" ? "abs_diff=$(abs(gd-gp))s" : "rel_diff=$reldiff"))
 end

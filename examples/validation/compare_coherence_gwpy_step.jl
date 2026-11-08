@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_coherence.jl (see README.md): computes gwpy's
 # `TimeSeries.csd()`/`.coherence()` over the same windows and writes both to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_coherence_gwpy_step.jl <h1_path> <l1_path> <off_start> <off_end> <duration> <out_csv>
 

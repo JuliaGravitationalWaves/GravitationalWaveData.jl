@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's H1/L1/V1 detector geometry (src/GWData/Detectors.jl, ported verbatim from
+# Compare GravitationalWaveData.jl's H1/L1/V1 detector geometry (src/GravitationalWaveData/Detectors.jl, ported verbatim from
 # LALSuite's LALDetectors.h constants) and compute_antenna_response (ported from
 # XLALComputeDetAMResponse) against lal.CachedDetectors/lal.ComputeDetAMResponse, across a grid
 # of sky positions/polarizations/times including near-pole (near-overhead-or-nadir, detector-
@@ -59,7 +59,7 @@ for (ga, la) in zip(gwdata_ant, lal_ant)
     global ant_maxabs = max(ant_maxabs, absdiff)
     global ant_maxrel = max(ant_maxrel, reldiff)
     println("  det=$(ga[1]) ra=$(ga[2]) dec=$(ga[3]) psi=$(ga[4]) gps=$(ga[5])  ",
-        "GWData=($fp_a,$fc_a)  lal=($fp_b,$fc_b)  abs_diff=$absdiff")
+        "GravitationalWaveData=($fp_a,$fc_a)  lal=($fp_b,$fc_b)  abs_diff=$absdiff")
 end
 println()
 println("max absolute F+/Fx difference: $ant_maxabs")

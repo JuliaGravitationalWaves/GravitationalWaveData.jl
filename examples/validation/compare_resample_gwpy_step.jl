@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_resample.jl (see README.md): applies gwpy's
 # `.resample()` to the same segment and writes its plain Welch PSD (`method="welch"`) to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_resample_gwpy_step.jl <h1_path> <seg_start> <seg_end> <new_rate> <out_csv>
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_time_delay.jl (see README.md): writes
+# GravitationalWaveData.jl side of compare_time_delay.jl (see README.md): writes
 # `time_delay_from_geocenter` over a grid of (det, ra, dec, gps) points to a CSV.
 #
-# Usage: julia --project=<GWData.jl root> compare_time_delay_gwdata_step.jl <delay_csv>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_time_delay_gwdata_step.jl <delay_csv>
 
-using GWData: H1, L1, V1, time_delay_from_geocenter
+using GravitationalWaveData: H1, L1, V1, time_delay_from_geocenter
 
 delay_csv = ARGS[1]
 

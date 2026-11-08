@@ -1,4 +1,4 @@
-# GWData.jl notebooks
+# GravitationalWaveData.jl notebooks
 
 - `*.ipynb` — Jupyter notebooks, one per docs tutorial, generated from `docs/literate/*.jl` via
   `julia --project=docs generate.jl`. Do not hand-edit; edit the Literate source under
@@ -12,6 +12,6 @@
   `julia --project=notebooks/bonito notebooks/bonito/filter_explorer.jl` and open the printed
   `http://127.0.0.1:PORT` URL in a browser (port 8081 for the filter explorer, 8082 for the
   Q-transform explorer). The first page load takes a minute or so while the data loads and the
-  first plot renders. Uses its own environment (`bonito/Project.toml`, with GWData taken from the
+  first plot renders. Uses its own environment (`bonito/Project.toml`, with GravitationalWaveData taken from the
   repo root via `[sources]`, so Julia 1.11 or later) rather than `docs`, because Bonito 5.x needs
   HTTP.jl 2.x while Pluto pins HTTP.jl to 1.x.

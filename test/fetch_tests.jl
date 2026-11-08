@@ -1,4 +1,4 @@
-# Tests for `fetch_open_data` (GWData.GWOSC).
+# Tests for `fetch_open_data` (GravitationalWaveData.GWOSC).
 #
 # Split into two groups:
 #   - Network-independent: the local-caching logic (`_gwosc_download`) and cache-directory
@@ -8,7 +8,7 @@
 #     network-isolated environment rather than hanging or erroring.
 
 using Downloads
-using GWData.GWOSC: _gwosc_download
+using GravitationalWaveData.GWOSC: _gwosc_download
 
 function _gwosc_reachable()
     try
@@ -21,15 +21,15 @@ function _gwosc_reachable()
 end
 
 @testset "GWOSC fetch: cache directory resolution" begin
-    withenv("GWDATA_CACHE_DIR" => "/tmp/gwd", "XDG_CACHE_HOME" => "/tmp/xdg") do
-        @test gwdata_cache_dir() == "/tmp/gwd"
-        @test gwdata_cache_dir("strain") == joinpath("/tmp/gwd", "strain")
+    withenv("GRAVITATIONALWAVEDATA_CACHE_DIR" => "/tmp/gwd", "XDG_CACHE_HOME" => "/tmp/xdg") do
+        @test gravitationalwavedata_cache_dir() == "/tmp/gwd"
+        @test gravitationalwavedata_cache_dir("strain") == joinpath("/tmp/gwd", "strain")
     end
-    withenv("GWDATA_CACHE_DIR" => nothing, "XDG_CACHE_HOME" => "/tmp/xdg") do
-        @test gwdata_cache_dir("strain") == joinpath("/tmp/xdg", "gwdata", "strain")
+    withenv("GRAVITATIONALWAVEDATA_CACHE_DIR" => nothing, "XDG_CACHE_HOME" => "/tmp/xdg") do
+        @test gravitationalwavedata_cache_dir("strain") == joinpath("/tmp/xdg", "gravitationalwavedata", "strain")
     end
-    withenv("GWDATA_CACHE_DIR" => nothing, "XDG_CACHE_HOME" => nothing) do
-        @test gwdata_cache_dir() == joinpath(homedir(), ".cache", "gwdata")
+    withenv("GRAVITATIONALWAVEDATA_CACHE_DIR" => nothing, "XDG_CACHE_HOME" => nothing) do
+        @test gravitationalwavedata_cache_dir() == joinpath(homedir(), ".cache", "gravitationalwavedata")
     end
 end
 

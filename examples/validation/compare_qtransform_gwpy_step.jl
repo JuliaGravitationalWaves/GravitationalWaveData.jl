@@ -1,12 +1,12 @@
 #!/usr/bin/env julia
 # Reference side of compare_qtransform.jl (see README.md): computes gwpy's raw
 # (pre-interpolation) Q-scan peak over the same segment and writes it to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Calls `gwpy.signal.qtransform.q_scan` directly (the function `TimeSeries.q_transform()` calls
 # internally) and reads its raw `QGram.peak`, not the interpolated `Spectrogram`'s argmax pixel.
-# GWData.jl's `q_transform` stops at the same raw QGram/peak (the spline regridding is
-# presentation-only; see src/GWData/QTransform.jl's module docstring), so this is the
+# GravitationalWaveData.jl's `q_transform` stops at the same raw QGram/peak (the spline regridding is
+# presentation-only; see src/GravitationalWaveData/QTransform.jl's module docstring), so this is the
 # like-for-like target.
 #
 # Usage: julia --project=examples/validation compare_qtransform_gwpy_step.jl <h1_path> <seg_start> <seg_end> <fmin> <fmax> <out_csv>

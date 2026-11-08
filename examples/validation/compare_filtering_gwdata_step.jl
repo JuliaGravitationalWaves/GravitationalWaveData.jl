@@ -1,11 +1,11 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_filtering.jl (see README.md): applies bandpass/highpass/
+# GravitationalWaveData.jl side of compare_filtering.jl (see README.md): applies bandpass/highpass/
 # lowpass to the analysis segment and whitens against the ASD the reference step wrote, writing
 # each result to a CSV in <out_dir>.
 #
-# Usage: julia --project=<GWData.jl root> compare_filtering_gwdata_step.jl <h1_path> <out_dir>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_filtering_gwdata_step.jl <h1_path> <out_dir>
 
-using GWData
+using GravitationalWaveData
 
 h1_path, out_dir = ARGS
 
@@ -59,4 +59,4 @@ whiten_seg = crop(strain, WHITEN_SEG_START, WHITEN_SEG_END)
 whitened = whiten(whiten_seg, asd; fduration=2.0)
 write_csv(joinpath(out_dir, "julia_whiten.csv"), times(whitened), whitened.data)
 
-println("GWData step done: wrote julia_{bandpass,highpass,lowpass,whiten}.csv to $out_dir")
+println("GravitationalWaveData step done: wrote julia_{bandpass,highpass,lowpass,whiten}.csv to $out_dir")

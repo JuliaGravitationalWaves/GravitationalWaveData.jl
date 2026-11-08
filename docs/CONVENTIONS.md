@@ -1,7 +1,7 @@
-# GWData.jl conventions
+# GravitationalWaveData.jl conventions
 
-This page collects the non-obvious numerical and physical conventions GWData.jl commits to. Each
-is also documented, with its exact provenance, at its point of use in `src/GWData/`; when the two
+This page collects the non-obvious numerical and physical conventions GravitationalWaveData.jl commits to. Each
+is also documented, with its exact provenance, at its point of use in `src/GravitationalWaveData/`; when the two
 disagree, the source comment is authoritative.
 
 The conventions follow established GW-analysis practice (`scipy.signal`, `gwpy`, LALSuite) rather
@@ -10,13 +10,13 @@ agreement with those reference implementations is summarized under [Validation](
 
 ## PSD/ASD normalization
 
-`psd`/`asd` (`src/GWData/PSD.jl`) estimate a one-sided power/amplitude spectral density from a
+`psd`/`asd` (`src/GravitationalWaveData/PSD.jl`) estimate a one-sided power/amplitude spectral density from a
 `TimeSeries` using median-Welch averaging.
 
 - **Segmentation**: the series is split into `seglen`-sample segments with fractional `overlap`
   (default `0.5`), starting at 1-based indices `1, 1+step, 1+2*step, ...` where
   `step = round(seglen * (1 - overlap))`. Too-short input raises `ArgumentError` rather than
-  silently returning zero segments. `csd`/`coherence` (`src/GWData/Coherence.jl`) reuse this exact
+  silently returning zero segments. `csd`/`coherence` (`src/GravitationalWaveData/Coherence.jl`) reuse this exact
   segmentation via the shared internal helper `_welch_starts`, so the two never drift apart.
 - **Window**: each segment is multiplied by a Hann window (`DSP.Windows.hanning`, the *symmetric*
   convention — endpoints exactly zero, not the *periodic*/DFT-even convention some FFT-adjacent
@@ -43,7 +43,7 @@ agreement with those reference implementations is summarized under [Validation](
 
 ### CSD / coherence normalization
 
-`csd`/`coherence` (`src/GWData/Coherence.jl`) generalize the same Welch machinery to a pair of
+`csd`/`coherence` (`src/GravitationalWaveData/Coherence.jl`) generalize the same Welch machinery to a pair of
 channels, following `scipy.signal.csd`/`scipy.signal.coherence`:
 
 - Same segmentation/window as `psd` (reusing `_welch_starts`/`_welch_window` directly), same
@@ -62,7 +62,7 @@ channels, following `scipy.signal.csd`/`scipy.signal.coherence`:
 
 ## Whitening
 
-`whiten` (`src/GWData/Filtering.jl`) whitens a `TimeSeries` against a supplied PSD/ASD using
+`whiten` (`src/GravitationalWaveData/Filtering.jl`) whitens a `TimeSeries` against a supplied PSD/ASD using
 **inverse spectrum truncation** (the algorithm used by `gwpy`'s `TimeSeries.whiten()`), *not* the
 naive "FFT, divide by ASD, inverse FFT" approach, which rings badly at segment edges.
 
@@ -88,7 +88,7 @@ Background theory: arXiv:gr-qc/0509116.
 
 ## Filtering
 
-`bandpass`/`highpass`/`lowpass`/`notch` (`src/GWData/Filtering.jl`) use a fixed-order (default 4)
+`bandpass`/`highpass`/`lowpass`/`notch` (`src/GravitationalWaveData/Filtering.jl`) use a fixed-order (default 4)
 Butterworth design applied zero-phase via `DSP.filtfilt`. Filter order is explicit, not
 auto-selected from a ripple/attenuation specification, so results differ from tools that design
 the order automatically (for example `gwpy`'s `iirdesign`-based `.bandpass()`).
@@ -100,7 +100,7 @@ GW data is timestamped in **GPS seconds**: a continuous SI-second count from the
 stops, skips, or repeats a second. This is why GW pipelines universally prefer it over UTC as an
 internal timestamp: it's monotonic and gap-free.
 
-`gps_to_utc`/`utc_to_gps` (`src/GWData/GPSTime.jl`) convert between GPS seconds and UTC
+`gps_to_utc`/`utc_to_gps` (`src/GravitationalWaveData/GPSTime.jl`) convert between GPS seconds and UTC
 `DateTime`s, **leap-second aware** via a historical table (`LEAP_SECOND_TABLE`) sourced from IERS
 Bulletin C, current through Bulletin C 71 (July 2025; most recent actual leap second inserted
 2016-12-31, i.e. `GPS - UTC = 18s` from 2017-01-01 onward). This is a real table lookup, not a
@@ -110,7 +110,7 @@ announces a new leap second (Bulletin C is issued twice yearly), extend `LEAP_SE
 the new entry; both conversion functions derive everything from that one table, so nothing else
 needs to change.
 
-A related but independently-sourced leap-second table lives in `src/GWData/SiderealTime.jl`
+A related but independently-sourced leap-second table lives in `src/GravitationalWaveData/SiderealTime.jl`
 (`LEAPS`), ported verbatim from LALSuite's own `XLALLeapSeconds.h` rather than IERS directly — this
 is deliberate: `gmst` (Greenwich Mean Sidereal Time) must match LALSuite's exact numerical
 convention bit-for-bit for interoperability with LALSuite-based pipelines, which means reproducing LALSuite's *specific* leap-second bookkeeping rather than a more
@@ -125,7 +125,7 @@ ordinary instants strictly before or after an insertion are meaningful inputs to
 
 ### Segment / SegmentList: half-open intervals
 
-`Segment`/`SegmentList` (`src/GWData/Segments.jl`) represent GPS-time intervals for data-quality
+`Segment`/`SegmentList` (`src/GravitationalWaveData/Segments.jl`) represent GPS-time intervals for data-quality
 vetoing, following the standard LIGO segment-list convention:
 
 - Every interval is **half-open**, `[start, stop)` — `start` is included, `stop` is not. This is
@@ -166,7 +166,7 @@ vetoing, following the standard LIGO segment-list convention:
 
 ## Q-transform
 
-`q_transform`/`q_scan` (`src/GWData/QTransform.jl`) implement the Omega-pipeline constant-Q
+`q_transform`/`q_scan` (`src/GravitationalWaveData/QTransform.jl`) implement the Omega-pipeline constant-Q
 transform (Chatterji 2005), with the tiling, bi-square window normalization and index conventions
 of `gwpy`'s `gwpy.signal.qtransform`:
 
@@ -186,7 +186,7 @@ of `gwpy`'s `gwpy.signal.qtransform`:
 ## Reference design curves (aLIGO / AdvVirgo)
 
 `aligo_design_psd`/`aligo_design_asd`/`avirgo_design_psd`/`avirgo_design_asd`
-(`src/GWData/ReferenceCurves.jl`) are ported verbatim from LALSimulation's `LALSimNoisePSD.c`, not
+(`src/GravitationalWaveData/ReferenceCurves.jl`) are ported verbatim from LALSimulation's `LALSimNoisePSD.c`, not
 re-derived. One naming trap worth flagging for anyone extending this module: the well-known simple
 closed-form "Ajith fit" some other codebases call `aLIGOZeroDetHighPower` is **not**
 what LALSimulation's function of the same name actually computes — the real function composes a
@@ -200,10 +200,10 @@ raw formula produces at `f=0`, same as calling the LALSimulation function direct
 ## Further reading
 
 Every convention above is documented in more depth, with exact formulas and full source citations,
-at its point of use: `src/GWData/PSD.jl`, `src/GWData/Coherence.jl`, `src/GWData/Filtering.jl`,
-`src/GWData/GPSTime.jl`, `src/GWData/SiderealTime.jl`, `src/GWData/Segments.jl`,
-`src/GWData/Types.jl`, `src/GWData/Spectrogram.jl`, `src/GWData/QTransform.jl`, and
-`src/GWData/ReferenceCurves.jl`.
+at its point of use: `src/GravitationalWaveData/PSD.jl`, `src/GravitationalWaveData/Coherence.jl`, `src/GravitationalWaveData/Filtering.jl`,
+`src/GravitationalWaveData/GPSTime.jl`, `src/GravitationalWaveData/SiderealTime.jl`, `src/GravitationalWaveData/Segments.jl`,
+`src/GravitationalWaveData/Types.jl`, `src/GravitationalWaveData/Spectrogram.jl`, `src/GravitationalWaveData/QTransform.jl`, and
+`src/GravitationalWaveData/ReferenceCurves.jl`.
 
 ## Validation
 

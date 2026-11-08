@@ -1,5 +1,5 @@
-name = "GWData"
-uuid = "5720056c-f93d-4cd9-9d37-32622349c792"
+name = "GravitationalWaveData"
+uuid = "d4636edc-8908-4226-933a-005f27205ddf"
 license = "MIT"
 version = "0.1.0"
 authors = ["Paul Hopkins <paul.hopkins256@gmail.com>"]
@@ -19,7 +19,7 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [extensions]
-GWDataRecipesBaseExt = "RecipesBase"
+GravitationalWaveDataRecipesBaseExt = "RecipesBase"
 
 [compat]
 Aqua = "0.8"

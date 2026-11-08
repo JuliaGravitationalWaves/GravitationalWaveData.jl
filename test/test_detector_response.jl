@@ -1,6 +1,6 @@
 using Test
-using GWData
-using GWData.Detectors: H1, L1, V1
+using GravitationalWaveData
+using GravitationalWaveData.Detectors: H1, L1, V1
 
 # ================================================================================================
 # Sidereal time, detector geometry, antenna response.
@@ -11,15 +11,15 @@ using GWData.Detectors: H1, L1, V1
 # lal bit-for-bit (0.0 absolute difference) at every GPS time tried, including a leap-second
 # boundary and fractional-second inputs. Antenna response matched to within ~1.7e-8 absolute /
 # ~1.2e-6 relative -- attributable to LALSuite's own `LALDetector.response` being stored as REAL4
-# (single precision) internally (see src/GWData/Detectors.jl's module docstring), not a discrepancy
+# (single precision) internally (see src/GravitationalWaveData/Detectors.jl's module docstring), not a discrepancy
 # in this port.
 # ================================================================================================
 
 @testset "SiderealTime: gmst" begin
     # cross-validated (bit-for-bit match against lal.GreenwichMeanSiderealTime).
-    @test GWData.gmst(1126259462.4) ≈ 36137.05523464343 rtol=0 atol=0  # GW150914
-    @test GWData.gmst(1187008882.4) ≈ 40566.97324959053 rtol=0 atol=0  # GW170817
-    @test GWData.gmst(630763213.0) ≈ 4.894961212823059 rtol=0 atol=0   # J2000.0 epoch
+    @test GravitationalWaveData.gmst(1126259462.4) ≈ 36137.05523464343 rtol=0 atol=0  # GW150914
+    @test GravitationalWaveData.gmst(1187008882.4) ≈ 40566.97324959053 rtol=0 atol=0  # GW170817
+    @test GravitationalWaveData.gmst(630763213.0) ≈ 4.894961212823059 rtol=0 atol=0   # J2000.0 epoch
 
     # Leap-second boundary (2015-Jul-01, GPS 1119744016, TAI-UTC 35->36): GPS second 1119744015
     # is UTC 23:59:59, GPS second 1119744016 is the inserted leap second UTC 23:59:60 (still
@@ -31,29 +31,29 @@ using GWData.Detectors: H1, L1, V1
     # vs. adding a full day's worth of seconds are equivalent under that formula) and so must be
     # bit-identical -- confirmed against lal in examples/validation/compare_gmst.jl (0.0
     # absolute difference at all three GPS times), not an artifact of this port.
-    g0 = GWData.gmst(1119744015.0)
-    g1 = GWData.gmst(1119744016.0)
-    g2 = GWData.gmst(1119744017.0)
-    sidereal_step = g0 - GWData.gmst(1119744014.0)  # a normal, non-boundary 1-second GMST step
+    g0 = GravitationalWaveData.gmst(1119744015.0)
+    g1 = GravitationalWaveData.gmst(1119744016.0)
+    g2 = GravitationalWaveData.gmst(1119744017.0)
+    sidereal_step = g0 - GravitationalWaveData.gmst(1119744014.0)  # a normal, non-boundary 1-second GMST step
     @test g1 - g0 ≈ sidereal_step atol=1e-9   # 23:59:59 -> 23:59:60: an ordinary step
     @test g2 == g1                             # 23:59:60 == 00:00:00 (next day), bit-for-bit
 
     # GMST increases monotonically with GPS time over a full day (no reduction mod 2*pi, matching
     # LALSuite's own convention).
-    @test GWData.gmst(1126259462.4 + 86400.0) > GWData.gmst(1126259462.4)
+    @test GravitationalWaveData.gmst(1126259462.4 + 86400.0) > GravitationalWaveData.gmst(1126259462.4)
 
     # Sidereal day (~23h56m4.0905s) is slightly shorter than a solar day: GMST should advance by
     # slightly MORE than 2*pi over exactly one solar (86400s) day.
-    delta = GWData.gmst(1126259462.4 + 86400.0) - GWData.gmst(1126259462.4)
+    delta = GravitationalWaveData.gmst(1126259462.4 + 86400.0) - GravitationalWaveData.gmst(1126259462.4)
     @test delta > 2 * pi
     @test delta ≈ 2 * pi * (86400.0 / 86164.0905) rtol=1e-3
 end
 
 @testset "SiderealTime: leap second table sanity" begin
-    @test_throws ArgumentError GWData.SiderealTime._leap_seconds_tai_utc(-100000000)  # before 1980
-    @test GWData.SiderealTime._leap_seconds_tai_utc(1119744015) == 35   # just before the 2015 leap second
-    @test GWData.SiderealTime._leap_seconds_tai_utc(1119744016) == 36   # at/after it
-    @test GWData.SiderealTime._leap_seconds_tai_utc(1440000000) == 37   # holds the last table value
+    @test_throws ArgumentError GravitationalWaveData.SiderealTime._leap_seconds_tai_utc(-100000000)  # before 1980
+    @test GravitationalWaveData.SiderealTime._leap_seconds_tai_utc(1119744015) == 35   # just before the 2015 leap second
+    @test GravitationalWaveData.SiderealTime._leap_seconds_tai_utc(1119744016) == 36   # at/after it
+    @test GravitationalWaveData.SiderealTime._leap_seconds_tai_utc(1440000000) == 37   # holds the last table value
 end
 
 @testset "Detectors: geometry sanity" begin
@@ -93,7 +93,7 @@ end
 # but uses the same X/Y wave-frame construction). Inverting this gives the (ra, dec) that makes
 # the source arrive from a chosen Earth-fixed unit direction `v` at a given `gps`.
 function _radec_for_propagation_direction(v, gps)
-    g = GWData.gmst(gps)
+    g = GravitationalWaveData.gmst(gps)
     dec = -asin(clamp(v[3], -1.0, 1.0))
     gha = atan(v[2], -v[1])
     return g - gha, dec
@@ -103,7 +103,7 @@ _cross(a, b) = (a[2] * b[3] - a[3] * b[2], a[3] * b[1] - a[1] * b[3], a[1] * b[2
 _normalize(a) = (n = sqrt(sum(x -> x^2, a)); a ./ n)
 
 # H1's arm-direction unit vectors (LALDetectors.h LAL_LHO_4K_ARM_{X,Y}_DIRECTION_*, same
-# constants src/GWData/Detectors.jl builds `H1`'s response tensor from).
+# constants src/GravitationalWaveData/Detectors.jl builds `H1`'s response tensor from).
 const _H1_ARM_X = (-0.22389266154, 0.79983062746, 0.55690487831)
 const _H1_ARM_Y = (-0.91397818574, 0.02609403989, -0.40492342125)
 
@@ -234,7 +234,7 @@ end
     # gha = gmst - ra -- independent little helper (not reusing this function's own internals),
     # so this checks the port's *geometry*, not just its self-consistency.
     function radec_for_source_direction(u, t)
-        g = GWData.gmst(t)
+        g = GravitationalWaveData.gmst(t)
         dec = asin(clamp(u[3], -1.0, 1.0))
         gha = atan(-u[2], u[1])
         return g - gha, dec

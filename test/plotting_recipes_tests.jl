@@ -1,9 +1,9 @@
 using Test
-using GWData
+using GravitationalWaveData
 using RecipesBase
 
 # ================================================================================================
-# Tests for the `GWDataRecipesBaseExt` package extension (ext/GWDataRecipesBaseExt.jl).
+# Tests for the `GravitationalWaveDataRecipesBaseExt` package extension (ext/GravitationalWaveDataRecipesBaseExt.jl).
 #
 # No plotting backend (Plots.jl/Makie/etc.) is needed to test a RecipesBase recipe: calling
 # `RecipesBase.apply_recipe(Dict{Symbol,Any}(), obj)` directly runs the `@recipe` block and
@@ -12,10 +12,10 @@ using RecipesBase
 # directly -- this is the standard way to unit-test a recipe without a rendering backend as a test
 # dependency. Loading `RecipesBase` here (a `[extras]`/test-only dependency, alongside the
 # `[weakdeps]` entry in Project.toml) is what triggers Julia's package-extension mechanism to
-# compile and load `GWDataRecipesBaseExt` in this test session.
+# compile and load `GravitationalWaveDataRecipesBaseExt` in this test session.
 # ================================================================================================
 
-@testset "Plotting recipes (GWDataRecipesBaseExt)" begin
+@testset "Plotting recipes (GravitationalWaveDataRecipesBaseExt)" begin
     @testset "TimeSeries recipe" begin
         ts = TimeSeries([1.0, 2.0, 3.0, 4.0], 100.0, 0.5; name="H1:STRAIN")
         rd = RecipesBase.apply_recipe(Dict{Symbol,Any}(), ts)
@@ -90,11 +90,11 @@ using RecipesBase
         t = (0:(N - 1)) ./ fs_rate
         x = sin.(2π * 10.0 .* t)
         ts = TimeSeries(x, 1000.0, 1 / fs_rate; name="tone")
-        # Qualified as `GWData.spectrogram` (not the bare, exported name): by the time this file
+        # Qualified as `GravitationalWaveData.spectrogram` (not the bare, exported name): by the time this file
         # runs, `test/psd_tests.jl` has already done a plain `using DSP` earlier in the same flat
         # `include()` chain into `Main`, and `DSP` also exports a `spectrogram` -- the bare name
         # is ambiguous at that point regardless of include order within this file itself.
-        spec = GWData.spectrogram(ts; n=64, name="tone spectrogram")
+        spec = GravitationalWaveData.spectrogram(ts; n=64, name="tone spectrogram")
 
         rd = RecipesBase.apply_recipe(Dict{Symbol,Any}(), spec)
         @test length(rd) == 1
@@ -114,14 +114,14 @@ using RecipesBase
 
     @testset "Spectrogram recipe: unnamed spectrogram gets generic colorbar title" begin
         ts = TimeSeries(sin.(2π * 10.0 .* ((0:511) ./ 100.0)), 0.0, 1 / 100.0)
-        spec = GWData.spectrogram(ts; n=64)
+        spec = GravitationalWaveData.spectrogram(ts; n=64)
         rd = RecipesBase.apply_recipe(Dict{Symbol,Any}(), spec)
         @test rd[1].plotattributes[:colorbar_title] == "Power"
     end
 
     @testset "Spectrogram recipe: user override wins over recipe default" begin
         ts = TimeSeries(sin.(2π * 10.0 .* ((0:511) ./ 100.0)), 0.0, 1 / 100.0)
-        spec = GWData.spectrogram(ts; n=64)
+        spec = GravitationalWaveData.spectrogram(ts; n=64)
         rd = RecipesBase.apply_recipe(Dict{Symbol,Any}(:colorbar_scale => :identity), spec)
         @test rd[1].plotattributes[:colorbar_scale] == :identity
     end

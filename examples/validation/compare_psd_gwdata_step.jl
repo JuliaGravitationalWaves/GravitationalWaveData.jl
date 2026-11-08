@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_psd.jl (see README.md): computes `psd` over the given
+# GravitationalWaveData.jl side of compare_psd.jl (see README.md): computes `psd` over the given
 # off-source window and writes it to a CSV.
 #
-# Usage: julia --project=<GWData.jl root> compare_psd_gwdata_step.jl <h1_path> <off_start> <off_end> <duration> <out_csv>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_psd_gwdata_step.jl <h1_path> <off_start> <off_end> <duration> <out_csv>
 
-using GWData
+using GravitationalWaveData
 
 h1_path, off_start_s, off_end_s, duration_s, out_csv = ARGS
 off_source_start = parse(Float64, off_start_s)

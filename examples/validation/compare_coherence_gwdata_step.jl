@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_coherence.jl (see README.md): computes `csd`/`coherence`
+# GravitationalWaveData.jl side of compare_coherence.jl (see README.md): computes `csd`/`coherence`
 # between the given H1/L1 off-source windows and writes both to a CSV.
 #
-# Usage: julia --project=<GWData.jl root> compare_coherence_gwdata_step.jl <h1_path> <l1_path> <off_start> <off_end> <duration> <out_csv>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_coherence_gwdata_step.jl <h1_path> <l1_path> <off_start> <off_end> <duration> <out_csv>
 
-using GWData
+using GravitationalWaveData
 
 h1_path, l1_path, off_start_s, off_end_s, duration_s, out_csv = ARGS
 off_source_start = parse(Float64, off_start_s)

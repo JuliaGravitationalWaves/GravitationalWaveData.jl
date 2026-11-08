@@ -13,7 +13,7 @@
 # algorithm writeup) -- and finishes by combining bandpass and whitening to reveal the classic
 # GW150914 "chirp".
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -21,7 +21,7 @@ gr()
 #
 # We use the same standard 4096 s off-source segment covering GW150914 that the rest of this
 # project's tutorials and tests use, fetched live from GWOSC via [`fetch_open_data`](@ref) (cached
-# locally under `~/.cache/gwdata/strain` on repeat calls, so re-running this tutorial doesn't
+# locally under `~/.cache/gravitationalwavedata/strain` on repeat calls, so re-running this tutorial doesn't
 # re-download the file).
 
 gps_start, gps_end = 1126256640, 1126260736
@@ -44,7 +44,7 @@ plot(raw_rel[raw_mask], strain.data[raw_mask];
 #
 # [`bandpass`](@ref), [`highpass`](@ref), [`lowpass`](@ref), and [`notch`](@ref) are all zero-phase
 # Butterworth filters (`DSP.digitalfilter` + `DSP.filtfilt`, fixed `order=4` by default -- see
-# `src/GWData/Filtering.jl`'s header comment for why the order is fixed rather than auto-selected).
+# `src/GravitationalWaveData/Filtering.jl`'s header comment for why the order is fixed rather than auto-selected).
 # We work on a 16 s segment centered on the merger, long enough that `filtfilt`'s edge transients
 # don't touch the region we plot.
 

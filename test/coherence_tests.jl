@@ -1,5 +1,5 @@
 using Test
-using GWData
+using GravitationalWaveData
 using Random
 using Statistics: median
 
@@ -13,7 +13,7 @@ using Statistics: median
 
     @testset "coherence == 1.0 for a signal against itself" begin
         x = TimeSeries(sigma .* randn(n), 0.0, dt; name="x")
-        coh = GWData.coherence(x, x; seglen=nseg, overlap=0.5)
+        coh = GravitationalWaveData.coherence(x, x; seglen=nseg, overlap=0.5)
         @test coh isa FrequencySeries{Float64}
         @test coh.f0 == 0.0
         @test coh.df ≈ 1 / (nseg * dt)
@@ -25,7 +25,7 @@ using Statistics: median
     @testset "coherence is near 0 for independent white noise" begin
         x = TimeSeries(sigma .* randn(n), 0.0, dt; name="x")
         y = TimeSeries(sigma .* randn(n), 0.0, dt; name="y")
-        coh = GWData.coherence(x, y; seglen=nseg, overlap=0.5)
+        coh = GravitationalWaveData.coherence(x, y; seglen=nseg, overlap=0.5)
         @test all(v -> 0.0 <= v <= 1.0, coh.data)
         # For ~O(nseglist) independent-ish (correlated by 50% overlap, so somewhat fewer effective
         # degrees of freedom) segments, the null-hypothesis coherence estimator has mean ~1/n_eff,
@@ -45,7 +45,7 @@ using Statistics: median
         noise_small = 0.1 * sigma .* randn(n)   # var ratio: signal is 100x noise power
         xt = TimeSeries(x, 0.0, dt; name="x")
         yt = TimeSeries(x .+ noise_small, 0.0, dt; name="y")
-        coh = GWData.coherence(xt, yt; seglen=nseg, overlap=0.5)
+        coh = GravitationalWaveData.coherence(xt, yt; seglen=nseg, overlap=0.5)
         expected = var(x) / (var(x) + var(noise_small))
         @test isapprox(median(coh.data), expected; rtol=0.1)
         @test median(coh.data) > 0.9
@@ -71,7 +71,7 @@ using Statistics: median
         x = TimeSeries(sigma .* randn(n), 0.0, dt)
         y = TimeSeries(sigma .* randn(n), 0.0, dt)
         c = csd(x, y; seglen=nseg, overlap=0.5)
-        k = GWData.coherence(x, y; seglen=nseg, overlap=0.5)
+        k = GravitationalWaveData.coherence(x, y; seglen=nseg, overlap=0.5)
         @test eltype(c) <: Complex
         @test eltype(k) <: Real
         @test length(c) == length(k)
@@ -86,8 +86,8 @@ using Statistics: median
 
         @test_throws ArgumentError csd(x, mismatched_dt; seglen=100)
         @test_throws ArgumentError csd(x, mismatched_len; seglen=100)
-        @test_throws ArgumentError GWData.coherence(x, mismatched_dt; seglen=100)
-        @test_throws ArgumentError GWData.coherence(x, mismatched_len; seglen=100)
+        @test_throws ArgumentError GravitationalWaveData.coherence(x, mismatched_dt; seglen=100)
+        @test_throws ArgumentError GravitationalWaveData.coherence(x, mismatched_len; seglen=100)
 
         try
             csd(x, mismatched_dt; seglen=100)
@@ -110,12 +110,12 @@ using Statistics: median
         short = TimeSeries(randn(100), 0.0, dt)
         short2 = TimeSeries(randn(100), 0.0, dt)
         @test_throws ArgumentError csd(short, short2; seglen=1000)
-        @test_throws ArgumentError GWData.coherence(short, short2; seglen=1000)
+        @test_throws ArgumentError GravitationalWaveData.coherence(short, short2; seglen=1000)
     end
 end
 
 # ================================================================================================
-# Cross-validated regression spot-checks on real data: these are GWData.jl's own `csd`/`coherence`
+# Cross-validated regression spot-checks on real data: these are GravitationalWaveData.jl's own `csd`/`coherence`
 # output at specific frequency bins on the real GW150914 H1/L1 off-source segment, recorded from an
 # actual run of `examples/validation/compare_coherence.jl` that confirmed close agreement with
 # gwpy's `TimeSeries.csd()`/`.coherence()` on the same segment/parameters:
@@ -125,7 +125,7 @@ end
 #
 # (better than this package's own PSD.jl/gwpy baseline of ~0.14%/1.14% median/max -- see
 # `compare_psd.jl` -- because coherence's numerator/denominator normalization mostly cancels).
-# The values below are GWData.jl's own output at 8 spot-check frequencies from that run (already
+# The values below are GravitationalWaveData.jl's own output at 8 spot-check frequencies from that run (already
 # confirmed gwpy-consistent to the precision above), baked in as an exact regression so a future
 # change to `csd`/`coherence` that silently alters the numerics fails this Julia-only test, without
 # needing gwpy available at test time.
@@ -154,7 +154,7 @@ end
         nseg = round(Int, duration / h1_strain.dt)
 
         csd_result = csd(h1_off, l1_off; seglen=nseg, overlap=0.5)
-        coh_result = GWData.coherence(h1_off, l1_off; seglen=nseg, overlap=0.5)
+        coh_result = GravitationalWaveData.coherence(h1_off, l1_off; seglen=nseg, overlap=0.5)
         freqs = collect(frequencies(csd_result))
 
         @test length(csd_result) == length(coh_result)
@@ -162,7 +162,7 @@ end
         @test csd_result.df ≈ 0.25   # 1/(4.0s * dt), dt = 1/4096s
 
         # Spot checks: (freq_hz, csd_re, csd_im, coherence), taken from an actual run of
-        # compare_coherence.jl (see header comment above) -- GWData.jl's own output, already
+        # compare_coherence.jl (see header comment above) -- GravitationalWaveData.jl's own output, already
         # confirmed gwpy-consistent at these exact points.
         spot_checks = [
             (20.0, -1.4022590884947186e-45, 1.1463018036657848e-45, 0.0014324602002561884),

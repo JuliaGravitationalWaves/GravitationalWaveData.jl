@@ -1,13 +1,13 @@
 # Locating the real GWOSC data files some tests use. Searched in order: this repo's `data/`
-# directory, the directory named by `ENV["GWDATA_TEST_DATA"]` (if set), and the default
-# `fetch_open_data` strain cache (`gwdata_cache_dir("strain")`, by default
-# `~/.cache/gwdata/strain`). Tests needing a file that isn't found `@test_skip` rather than fail;
+# directory, the directory named by `ENV["GRAVITATIONALWAVEDATA_TEST_DATA"]` (if set), and the default
+# `fetch_open_data` strain cache (`gravitationalwavedata_cache_dir("strain")`, by default
+# `~/.cache/gravitationalwavedata/strain`). Tests needing a file that isn't found `@test_skip` rather than fail;
 # run e.g. `fetch_open_data("H1", 1126256640, 1126260736)` once to populate the cache.
 
 const TEST_DATA_DIRS = filter(!isnothing, [
     joinpath(@__DIR__, "..", "data"),
-    get(ENV, "GWDATA_TEST_DATA", nothing),
-    gwdata_cache_dir("strain"),
+    get(ENV, "GRAVITATIONALWAVEDATA_TEST_DATA", nothing),
+    gravitationalwavedata_cache_dir("strain"),
 ])
 
 """

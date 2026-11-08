@@ -1,4 +1,4 @@
-# GWData.jl Bonito notebook: Filter explorer
+# GravitationalWaveData.jl Bonito notebook: Filter explorer
 #
 # Bonito.jl counterpart of `../pluto/filter_explorer.jl`. Interactively design a zero-phase
 # Butterworth filter (`bandpass`/`highpass`/`lowpass`/`notch`) on the GW150914 H1 segment and
@@ -14,14 +14,14 @@
 import Pkg
 Pkg.activate(@__DIR__)
 
-using GWData, Plots, Bonito, Base64
+using GravitationalWaveData, Plots, Bonito, Base64
 import Bonito.TailwindDashboard as D
 
 gr()
 
 # --- Fetching real strain data ---
 # Same standard GW150914 H1 segment as the rest of this project's tutorials, fetched via
-# `fetch_open_data` (cached locally under `~/.cache/gwdata/strain`). Cropped to 16 s around
+# `fetch_open_data` (cached locally under `~/.cache/gravitationalwavedata/strain`). Cropped to 16 s around
 # the merger, same as `docs/literate/03_filtering_whitening.jl`.
 const gps_start, gps_end = 1126256640, 1126260736
 const gps_merger = 1126259462.4   # GW150914 merger GPS time

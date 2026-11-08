@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's `gmst` (ported from LALSuite's XLALGreenwichMeanSiderealTime, see
-# src/GWData/SiderealTime.jl) against lal.GreenwichMeanSiderealTime itself, across a range of GPS
+# Compare GravitationalWaveData.jl's `gmst` (ported from LALSuite's XLALGreenwichMeanSiderealTime, see
+# src/GravitationalWaveData/SiderealTime.jl) against lal.GreenwichMeanSiderealTime itself, across a range of GPS
 # times chosen to exercise: the J2000.0 reference epoch, a leap-second boundary (2015-Jul-01,
 # GPS 1119744016 -- one second before/at/after), real GW event trigger times spanning O1-O4, and
 # a time carrying a fractional second.
@@ -48,7 +48,7 @@ lal_gps, lal_gmst = read_csv(lal_csv)
 
 @assert gwdata_gps == lal_gps "GPS time lists don't match"
 
-println("Comparing GWData.jl's gmst() vs lal.GreenwichMeanSiderealTime, $(length(GPS_TIMES)) GPS times")
+println("Comparing GravitationalWaveData.jl's gmst() vs lal.GreenwichMeanSiderealTime, $(length(GPS_TIMES)) GPS times")
 println()
 maxabs = 0.0
 maxrel = 0.0
@@ -60,7 +60,7 @@ for i in eachindex(gwdata_gps)
     reldiff = absdiff / abs(b)
     global maxabs = max(maxabs, absdiff)
     global maxrel = max(maxrel, reldiff)
-    println("  gps=$g  GWData=$a  lal=$b  abs_diff=$absdiff  rel_diff=$reldiff")
+    println("  gps=$g  GravitationalWaveData=$a  lal=$b  abs_diff=$absdiff  rel_diff=$reldiff")
 end
 println()
 println("max absolute difference (radians): $maxabs")

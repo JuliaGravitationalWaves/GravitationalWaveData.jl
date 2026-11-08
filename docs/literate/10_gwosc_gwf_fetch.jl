@@ -1,14 +1,14 @@
 # # GWOSC & GWF Fetch
 #
 # Every other tutorial in this set starts from data that's already local. This one covers how it
-# gets there in the first place: `GWData.jl`'s own network client for the public
+# gets there in the first place: `GravitationalWaveData.jl`'s own network client for the public
 # [GWOSC](https://gwosc.org) (Gravitational Wave Open Science Center) archive, which fetches real
 # strain data by GPS range or by event name, in whichever file format GWOSC offers. The API is
 # [`fetch_open_data`](@ref) (two methods — by GPS range, or by event name) plus two file readers:
 # [`load_gwosc_strain`](@ref) for GWOSC's HDF5 files, and [`load_gwf_strain`](@ref)/
 # [`list_gwf_channels`](@ref) for LIGO/Virgo's native binary frame ("GWF") format.
 
-using GWData
+using GravitationalWaveData
 
 # ## Fetching by explicit GPS range
 #
@@ -69,7 +69,7 @@ duration(short_strain)
 # ## Local caching
 #
 # Both `fetch_open_data` methods cache downloaded files under `cache_dir` (default
-# `~/.cache/gwdata/strain`), keyed by GWOSC's own filename. A repeat call for the same
+# `~/.cache/gravitationalwavedata/strain`), keyed by GWOSC's own filename. A repeat call for the same
 # detector/range/sample-rate is served from that cache without re-downloading the (potentially
 # large) strain file — only GWOSC's small locator JSON is re-queried. Timing the GPS-range call from
 # above against a repeat makes this concrete:
@@ -79,7 +79,7 @@ t_repeat = @elapsed fetch_open_data("H1", 1126256640, 1126256640 + 4096)
 (first_call_seconds=t_first, repeat_call_seconds=t_repeat)
 
 # Both calls above land on an already-cached file (this tutorial already fetched it once, and
-# `~/.cache/gwdata/strain` persists across runs), so neither number reflects a genuine ~100+ MB
+# `~/.cache/gravitationalwavedata/strain` persists across runs), so neither number reflects a genuine ~100+ MB
 # download — but `t_repeat` is still consistently the cheaper of the two, since even a
 # fully-cached-on-disk `t_first` still re-resolves the GWOSC archive-links JSON before discovering
 # the local file is already present, while nothing here changes that cost between the two calls
@@ -90,14 +90,14 @@ t_repeat = @elapsed fetch_open_data("H1", 1126256640, 1126256640 + 4096)
 # ## Native frame files: `.gwf`
 #
 # GWOSC also republishes the same strain data in LIGO/Virgo's own native binary frame format
-# ("GWF", the IGWD frame format specified by LIGO-T970130). `GWData.jl` ships a pure-Julia reader
-# for it (`src/GWData/IO/GWF.jl`) — no LALSuite/frame-cpp dependency needed. This tutorial uses the
+# ("GWF", the IGWD frame format specified by LIGO-T970130). `GravitationalWaveData.jl` ships a pure-Julia reader
+# for it (`src/GravitationalWaveData/IO/GWF.jl`) — no LALSuite/frame-cpp dependency needed. This tutorial uses the
 # same GW150914 H1 segment as above, downloaded (once, then reused) from the exact URL
 # `data/README.md` documents for it, found via GWOSC's bulk archive-links API:
 
 using Downloads: Downloads
 
-data_dir = joinpath(dirname(dirname(pathof(GWData))), "data")
+data_dir = joinpath(dirname(dirname(pathof(GravitationalWaveData))), "data")
 mkpath(data_dir)
 gwf_path = joinpath(data_dir, "H-H1_LOSC_4_V1-1126256640-4096.gwf")
 if !isfile(gwf_path)
@@ -132,7 +132,7 @@ gwf_strain.t0 == h1_strain.t0, gwf_strain.dt == h1_strain.dt
 gwf_strain.data == h1_strain.data
 
 # Whichever format a given dataset happens to be published in, both feed the exact same
-# [`TimeSeries`](@ref) type into the rest of `GWData.jl` — filtering, PSD estimation, plotting, all
+# [`TimeSeries`](@ref) type into the rest of `GravitationalWaveData.jl` — filtering, PSD estimation, plotting, all
 # of it. The choice of `.gwf` vs. `.hdf5` only matters at this one loading step.
 
 # ## A sanity-check plot

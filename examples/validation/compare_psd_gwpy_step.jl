@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 # Reference side of compare_psd.jl (see README.md): computes gwpy's median-Welch
 # PSD over the same off-source window and writes it to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_psd_gwpy_step.jl <h1_path> <off_start> <off_end> <duration> <out_csv>
 

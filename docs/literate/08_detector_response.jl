@@ -9,7 +9,7 @@
 # wavefront at a slightly different geocentric time delay, set by their physical separation) is
 # the primary way multi-detector networks localize a source on the sky.
 #
-# The detector modules (`src/GWData/Detectors.jl`, `src/GWData/SiderealTime.jl`) are a direct,
+# The detector modules (`src/GravitationalWaveData/Detectors.jl`, `src/GravitationalWaveData/SiderealTime.jl`) are a direct,
 # verbatim port of **LALSuite**'s own hardcoded detector table and `XLALComputeDetAMResponse`/
 # `XLALTimeDelayFromEarthCenter`, so results here are bit-for-bit comparable (up to the
 # Float64-vs-REAL4 precision difference noted in `Detectors.jl`'s header) with LALSuite and the
@@ -17,17 +17,17 @@
 #
 # Everything below is pure geometry and runs instantly, offline — no GWOSC network fetch needed.
 
-using GWData
+using GravitationalWaveData
 using Plots
 
 # ## Detector geometry
 #
-# `GWData.jl` ships three ready-made [`Detector`](@ref) instances — [`H1`](@ref) (LIGO Hanford),
+# `GravitationalWaveData.jl` ships three ready-made [`Detector`](@ref) instances — [`H1`](@ref) (LIGO Hanford),
 # [`L1`](@ref) (LIGO Livingston), and [`V1`](@ref) (Virgo) — each a channel-name `prefix` plus a
 # [`DetectorGeometry`](@ref) (returned by [`geometry`](@ref)) holding an Earth-centered Cartesian
 # vertex `location` (meters) and a dimensionless `response` tensor built from the detector's two
 # arm directions. The geometry is plain bits, so GPU kernels take `geometry(H1)` rather than `H1`. Both are ported verbatim from LALSuite's `lalCachedDetectors`
-# table (see `src/GWData/Detectors.jl`'s module docstring for the exact source), not re-derived
+# table (see `src/GravitationalWaveData/Detectors.jl`'s module docstring for the exact source), not re-derived
 # from published latitude/longitude/azimuth numbers, so this module can't drift from LALSuite's own
 # values.
 

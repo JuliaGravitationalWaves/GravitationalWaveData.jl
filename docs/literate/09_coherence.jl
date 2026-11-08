@@ -11,7 +11,7 @@
 # the result (near-zero broadband coherence with a couple of narrow, physically-explicable spikes)
 # is itself the interesting, correct answer, not a bug.
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 

@@ -24,7 +24,7 @@ end
 
 
 # ╔═╡ 4495fe80-aad6-11f1-84fb-617462881561
-using GWData, Plots, PlutoUI, Markdown, HypertextLiteral
+using GravitationalWaveData, Plots, PlutoUI, Markdown, HypertextLiteral
 
 # ╔═╡ 4495fe80-aad6-11f1-9443-f1fb60600b92
 md"""
@@ -44,7 +44,7 @@ md"""
 ## Fetching real strain data
 
 Same standard GW150914 H1 segment as the rest of this project's tutorials, fetched via
-[`fetch_open_data`](@ref) (cached locally under `~/.cache/gwdata/strain`). Cropped to 16 s
+[`fetch_open_data`](@ref) (cached locally under `~/.cache/gravitationalwavedata/strain`). Cropped to 16 s
 around the merger, same as `docs/literate/03_filtering_whitening.jl`.
 """
 

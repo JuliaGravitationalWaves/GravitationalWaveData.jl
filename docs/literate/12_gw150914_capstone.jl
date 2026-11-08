@@ -15,7 +15,7 @@
 # `bandpass`/`whiten`'s inverse-spectrum-truncation algorithm, `q_transform`'s multi-Q search --
 # and only briefly recaps them here. The payoff of this page is entirely in the combination.
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -23,7 +23,7 @@ gr()
 #
 # The same standard 4096 s off-source segment covering GW150914, this time for *both* LIGO sites,
 # fetched live from GWOSC via [`fetch_open_data`](@ref) (cached locally under
-# `~/.cache/gwdata/strain` -- both files are already cached from earlier tutorials in this docs
+# `~/.cache/gravitationalwavedata/strain` -- both files are already cached from earlier tutorials in this docs
 # build, notably [Coherence & CSD](09_coherence.md), which also uses this H1/L1 pair):
 
 gps_start, gps_end = 1126256640, 1126260736
@@ -76,7 +76,7 @@ l1_chirp = bandpass(l1_white, 30.0, 400.0)
 # GW150914 arrived at the two sites about 6.9 ms apart, and the detectors' relative orientation on
 # Earth means one channel's signal is inverted relative to the other. The standard figure applies
 # this correction (shift L1 by 6.9 ms and flip its sign) purely to overlay the two traces on one
-# time axis for the figure -- it has no effect on either detector's own data. GWData.jl has no
+# time axis for the figure -- it has no effect on either detector's own data. GravitationalWaveData.jl has no
 # `shift` method yet, but a [`TimeSeries`](@ref) is just `data`/`t0`/`dt`/`name`, so the same
 # correction is one direct construction:
 

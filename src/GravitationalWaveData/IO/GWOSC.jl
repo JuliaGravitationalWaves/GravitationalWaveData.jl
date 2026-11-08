@@ -1,6 +1,6 @@
 module GWOSC
 
-export load_gwosc_strain, condition_segment, fetch_open_data, gwdata_cache_dir
+export load_gwosc_strain, condition_segment, fetch_open_data, gravitationalwavedata_cache_dir
 
 using HDF5
 using DSP: DSP
@@ -166,31 +166,31 @@ function _gwosc_download(url::AbstractString, cache_dir::AbstractString; force::
 end
 
 """
-    gwdata_cache_dir(subdirs...) -> String
+    gravitationalwavedata_cache_dir(subdirs...) -> String
 
-Root of GWData.jl's download cache, optionally joined with `subdirs`. Resolved in order:
+Root of GravitationalWaveData.jl's download cache, optionally joined with `subdirs`. Resolved in order:
 
-  1. `ENV["GWDATA_CACHE_DIR"]`, if set;
-  2. `\$XDG_CACHE_HOME/gwdata`, if `XDG_CACHE_HOME` is set;
-  3. `~/.cache/gwdata`.
+  1. `ENV["GRAVITATIONALWAVEDATA_CACHE_DIR"]`, if set;
+  2. `\$XDG_CACHE_HOME/gravitationalwavedata`, if `XDG_CACHE_HOME` is set;
+  3. `~/.cache/gravitationalwavedata`.
 
 The directory is a plain tree of files under their upstream names, so other tools can read it
 directly. Subdirectories: `strain/` holds GWOSC strain files downloaded by
 [`fetch_open_data`](@ref), and `posteriors/` holds parameter-estimation releases downloaded by
 `fetch_posterior_samples`. The path is not created by this function.
 """
-function gwdata_cache_dir(subdirs::AbstractString...)
-    root = if haskey(ENV, "GWDATA_CACHE_DIR")
-        ENV["GWDATA_CACHE_DIR"]
+function gravitationalwavedata_cache_dir(subdirs::AbstractString...)
+    root = if haskey(ENV, "GRAVITATIONALWAVEDATA_CACHE_DIR")
+        ENV["GRAVITATIONALWAVEDATA_CACHE_DIR"]
     elseif haskey(ENV, "XDG_CACHE_HOME")
-        joinpath(ENV["XDG_CACHE_HOME"], "gwdata")
+        joinpath(ENV["XDG_CACHE_HOME"], "gravitationalwavedata")
     else
-        joinpath(homedir(), ".cache", "gwdata")
+        joinpath(homedir(), ".cache", "gravitationalwavedata")
     end
     return joinpath(root, subdirs...)
 end
 
-_default_gwosc_cache_dir() = gwdata_cache_dir("strain")
+_default_gwosc_cache_dir() = gravitationalwavedata_cache_dir("strain")
 
 """
     _gwosc_event_candidates(event, version, host) -> Vector{Pair{String,Any}}
@@ -245,9 +245,9 @@ fully covers the request. `version`, if given, additionally requires the chosen 
 carry that data-release version tag (`_V<version>-`/`_R<version>-`, GWOSC's own file-naming
 convention).
 
-Downloaded files are cached under `cache_dir` (default `gwdata_cache_dir("strain")`, i.e.
-`~/.cache/gwdata/strain` unless `GWDATA_CACHE_DIR` or `XDG_CACHE_HOME` is set; see
-[`gwdata_cache_dir`](@ref)) keyed by GWOSC's own filename; a repeat call for the same file re-does
+Downloaded files are cached under `cache_dir` (default `gravitationalwavedata_cache_dir("strain")`, i.e.
+`~/.cache/gravitationalwavedata/strain` unless `GRAVITATIONALWAVEDATA_CACHE_DIR` or `XDG_CACHE_HOME` is set; see
+[`gravitationalwavedata_cache_dir`](@ref)) keyed by GWOSC's own filename; a repeat call for the same file re-does
 the (cheap, small-JSON) locator query but skips re-downloading the (potentially large) strain file
 itself, unless `force=true`. See this module's docstring above for the exact GWOSC endpoints
 queried.

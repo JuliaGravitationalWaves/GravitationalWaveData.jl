@@ -1,17 +1,17 @@
-module GWDataRecipesBaseExt
+module GravitationalWaveDataRecipesBaseExt
 
-using GWData: TimeSeries, FrequencySeries, Spectrogram, times, frequencies
+using GravitationalWaveData: TimeSeries, FrequencySeries, Spectrogram, times, frequencies
 using RecipesBase: RecipesBase, @recipe
 
 # ================================================================================================
 # RecipesBase plotting recipes for `TimeSeries`, `FrequencySeries`, and `Spectrogram`. This file is a Julia
 # *package extension* (see the `[weakdeps]`/`[extensions]` sections of `Project.toml`): it is only
-# loaded -- and only needs to compile -- once both `GWData` and `RecipesBase` are loaded in the
+# loaded -- and only needs to compile -- once both `GravitationalWaveData` and `RecipesBase` are loaded in the
 # same session (in practice, whenever a caller also loads a RecipesBase-backed plotting package
-# such as `Plots.jl` or `UnicodePlots.jl`, since those depend on `RecipesBase`). `GWData` itself
+# such as `Plots.jl` or `UnicodePlots.jl`, since those depend on `RecipesBase`). `GravitationalWaveData` itself
 # carries no hard dependency on `RecipesBase` or any plotting package.
 #
-# Once loaded, `plot(ts)`, `plot(fs)`, and `plot(spec)` "just work" for `GWData`'s own types with
+# Once loaded, `plot(ts)`, `plot(fs)`, and `plot(spec)` "just work" for `GravitationalWaveData`'s own types with
 # no further glue code.
 #
 # Convention notes (only the load-bearing choices are explained here; see each recipe's own
@@ -25,7 +25,7 @@ using RecipesBase: RecipesBase, @recipe
 #
 # Every attribute below is set with `-->` (recipe-default precedence: the *caller's* explicit
 # keyword wins), never `:=`, since none of these choices is something a caller must be prevented
-# from overriding -- unlike, say, a fixed data transform, there is no GWData-internal invariant
+# from overriding -- unlike, say, a fixed data transform, there is no GravitationalWaveData-internal invariant
 # that would break if a user picks a different colormap, scale, or label.
 # ================================================================================================
 
@@ -39,7 +39,7 @@ by the type) is plotted as its magnitude. Default `xlabel`/`ylabel` are generic;
 `plot(ts; label="H1", ylabel="Strain")`.
 
 Requires a `RecipesBase`-backed plotting package (e.g. `Plots.jl`) to be loaded to actually render
-a plot; `GWData` itself has no hard dependency on one.
+a plot; `GravitationalWaveData` itself has no hard dependency on one.
 """
 @recipe function plot(ts::TimeSeries)
     seriestype --> :path
@@ -61,7 +61,7 @@ uses `fs.name` when set. All defaults are set with `-->`, so a caller with non-P
 override, e.g. `plot(fs; xscale=:identity, yscale=:identity)`.
 
 Requires a `RecipesBase`-backed plotting package (e.g. `Plots.jl`) to be loaded to actually render
-a plot; `GWData` itself has no hard dependency on one.
+a plot; `GravitationalWaveData` itself has no hard dependency on one.
 """
 @recipe function plot(fs::FrequencySeries)
     seriestype --> :path
@@ -85,7 +85,7 @@ see `Spectrogram`'s own docstring on this axis-order convention). Defaults to a 
 frequency; overridable, e.g. `plot(spec; colorbar_scale=:identity)` for a linear color scale.
 
 Requires a `RecipesBase`-backed plotting package (e.g. `Plots.jl`) to be loaded to actually render
-a plot; `GWData` itself has no hard dependency on one.
+a plot; `GravitationalWaveData` itself has no hard dependency on one.
 """
 @recipe function plot(spec::Spectrogram)
     seriestype --> :heatmap

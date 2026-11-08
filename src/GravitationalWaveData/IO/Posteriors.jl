@@ -3,7 +3,7 @@ module Posteriors
 export fetch_posterior_samples, list_posterior_analyses, load_posterior_samples
 
 using HDF5
-using ..GWOSC: GWOSC_DEFAULT_HOST, gwdata_cache_dir, _gwosc_fetch_json, _gwosc_download,
+using ..GWOSC: GWOSC_DEFAULT_HOST, gravitationalwavedata_cache_dir, _gwosc_fetch_json, _gwosc_download,
                _gwosc_event_candidates
 
 # ================================================================================================
@@ -22,11 +22,11 @@ _is_hdf5_url(url::AbstractString) =
     occursin(r"\.(h5|hdf5)(/content)?$", split(url, '?')[1])
 
 """
-    fetch_posterior_samples(event; version=nothing, cache_dir=gwdata_cache_dir("posteriors"),
+    fetch_posterior_samples(event; version=nothing, cache_dir=gravitationalwavedata_cache_dir("posteriors"),
                             host="https://gwosc.org", force=false) -> String
 
 Download the preferred published posterior-sample release for `event` (e.g. `"GW150914"`, matched as
-in [`fetch_open_data`](@ref GWData.GWOSC.fetch_open_data)'s event method) and return the local file path.
+in [`fetch_open_data`](@ref GravitationalWaveData.GWOSC.fetch_open_data)'s event method) and return the local file path.
 GWOSC catalog versions are tried highest-first, and the first one whose preferred PE analysis has an
 HDF5 data release is used, so recent events resolve to their GWTC-2.1/GWTC-3 PESummary files.
 `version` restricts the search to one GWOSC event version.
@@ -37,7 +37,7 @@ re-downloading unless `force=true`. Read the result with [`list_posterior_analys
 """
 function fetch_posterior_samples(event::AbstractString;
                                  version::Union{Integer,Nothing}=nothing,
-                                 cache_dir::AbstractString=gwdata_cache_dir("posteriors"),
+                                 cache_dir::AbstractString=gravitationalwavedata_cache_dir("posteriors"),
                                  host::AbstractString=GWOSC_DEFAULT_HOST, force::Bool=false)
     tried_urls = String[]
     for (_, meta) in _gwosc_event_candidates(event, version, host)

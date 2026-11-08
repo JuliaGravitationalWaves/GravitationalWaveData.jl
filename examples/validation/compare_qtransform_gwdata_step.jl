@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
-# GWData.jl side of compare_qtransform.jl (see README.md): computes the raw
+# GravitationalWaveData.jl side of compare_qtransform.jl (see README.md): computes the raw
 # `q_transform` peak over the given H1 segment and writes it to a CSV.
 #
-# Usage: julia --project=<GWData.jl root> compare_qtransform_gwdata_step.jl <h1_path> <seg_start> <seg_end> <fmin> <fmax> <out_csv>
+# Usage: julia --project=<GravitationalWaveData.jl root> compare_qtransform_gwdata_step.jl <h1_path> <seg_start> <seg_end> <fmin> <fmax> <out_csv>
 
-using GWData
+using GravitationalWaveData
 
 h1_path, seg_start_s, seg_end_s, fmin_s, fmax_s, out_csv = ARGS
 seg_start = parse(Float64, seg_start_s)

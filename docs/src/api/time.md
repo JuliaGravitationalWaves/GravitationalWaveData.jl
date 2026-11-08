@@ -4,5 +4,5 @@ GPS/UTC conversion with leap seconds, `Segment`/`SegmentList` algebra, and Green
 time.
 
 ```@autodocs
-Modules = [GWData.GPSTime, GWData.Segments, GWData.SiderealTime]
+Modules = [GravitationalWaveData.GPSTime, GravitationalWaveData.Segments, GravitationalWaveData.SiderealTime]
 ```

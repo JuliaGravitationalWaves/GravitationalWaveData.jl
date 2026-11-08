@@ -1,6 +1,6 @@
 # Validation against gwpy and LALSuite
 
-These scripts check GWData.jl numerically against the reference implementations it follows:
+These scripts check GravitationalWaveData.jl numerically against the reference implementations it follows:
 [gwpy](https://gwpy.github.io/) (and the scipy routines underneath it) for spectral estimation,
 filtering, resampling, spectrograms, coherence and the Q-transform, and LALSuite's `lal` and
 `lalsimulation` Python bindings for sidereal time, detector response, time delays and design
@@ -15,7 +15,7 @@ change against the references.
   Linux install of Julia.
 - Julia 1.10 or later.
 - Network access on the first run. The data-driven comparisons download the GW150914 H1 and
-  L1 strain files from GWOSC (about 130 MB each) into the GWData.jl cache, and the reference
+  L1 strain files from GWOSC (about 130 MB each) into the GravitationalWaveData.jl cache, and the reference
   project creates a conda environment with gwpy and LALSuite (a few hundred MB). Both are
   reused on later runs.
 
@@ -37,7 +37,7 @@ julia examples/validation/compare_psd.jl          # one comparison
 Each comparison prints its agreement figures. The intermediate CSV files go to
 `examples/validation/output/`, which git ignores.
 
-| Script | GWData.jl | Reference |
+| Script | GravitationalWaveData.jl | Reference |
 |:--|:--|:--|
 | `compare_psd.jl` | `psd` | gwpy `TimeSeries.psd` |
 | `compare_filtering.jl` | `bandpass`, `highpass`, `lowpass`, `whiten` | gwpy filters and `whiten` |
@@ -58,11 +58,11 @@ values used by `test/qtransform.jl`; see its header for usage.
 Each `compare_<name>.jl` driver runs two separate Julia processes, which pass their results to
 each other through CSV files:
 
-- `compare_<name>_gwdata_step.jl` runs in the GWData.jl project (the repository root).
+- `compare_<name>_gwdata_step.jl` runs in the GravitationalWaveData.jl project (the repository root).
 - `compare_<name>_gwpy_step.jl` or `compare_<name>_lal_step.jl` runs in this directory's project,
   which contains only PythonCall plus the conda environment.
 
-The two sides must not share a process. Julia's `HDF5_jll` (a GWData.jl dependency) and
+The two sides must not share a process. Julia's `HDF5_jll` (a GravitationalWaveData.jl dependency) and
 Python's `h5py` each ship a library named `libhdf5`, and with both loaded the wrong one's
 symbols get used, so `import h5py` fails with an `undefined symbol` error. The shared helpers for
 starting the two processes and locating the data are in [`common.jl`](common.jl).

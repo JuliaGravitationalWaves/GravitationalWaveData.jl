@@ -163,7 +163,7 @@ at `gps_time` (GPS seconds). Direct port of `XLALComputeDetAMResponse`
 (`lal/lib/tools/DetResponse.c`), implementing Eqs. (B4), (B5), (B7) of Anderson et al., PRD 63,
 042003 (2001).
 
-Computes [`gmst`](@ref GWData.SiderealTime.gmst)`(gps_time)` (relatively expensive: leap-second
+Computes [`gmst`](@ref GravitationalWaveData.SiderealTime.gmst)`(gps_time)` (relatively expensive: leap-second
 table scan + Julian-day conversion) and calls [`antenna_response_gmst`](@ref), which callers that
 already hold the GMST -- and GPU kernels -- should use directly.
 """
@@ -179,7 +179,7 @@ the GPS time. Allocation-free and type-generic (the result's type follows the pr
 and geometry types), so it is safe inside GPU kernels and Enzyme-differentiated code when called on
 a [`DetectorGeometry`](@ref).
 
-[`gmst`](@ref GWData.SiderealTime.gmst) is not reduced modulo 2pi (it is ~4e4 rad for current GPS
+[`gmst`](@ref GravitationalWaveData.SiderealTime.gmst) is not reduced modulo 2pi (it is ~4e4 rad for current GPS
 times): pass `Float32(mod2pi(gmst(gps_time)))` for single-precision evaluation, or the hour angle
 loses ~1e-3 rad.
 """
@@ -239,7 +239,7 @@ arriving from sky position `(ra, dec)` (equatorial right ascension/declination, 
 
 Sign convention (matches LALSuite exactly): **positive when the wavefront arrives at the detector
 after arriving at the geocenter** -- i.e. `t_detector = t_geocenter + time_delay_from_geocenter(...)`.
-Computes [`gmst`](@ref GWData.SiderealTime.gmst)`(gps_time)` and calls
+Computes [`gmst`](@ref GravitationalWaveData.SiderealTime.gmst)`(gps_time)` and calls
 [`time_delay_from_geocenter_gmst`](@ref).
 """
 function time_delay_from_geocenter(detector::AbstractDetector, ra::Real, dec::Real, gps_time::Real)

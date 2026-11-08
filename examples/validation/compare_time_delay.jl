@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-# Compare GWData.jl's time_delay_from_geocenter (src/GWData/Detectors.jl, ported from LALSuite's
+# Compare GravitationalWaveData.jl's time_delay_from_geocenter (src/GravitationalWaveData/Detectors.jl, ported from LALSuite's
 # XLALTimeDelayFromEarthCenter via its XLALArrivalTimeDiff helper) against
 # lal.TimeDelayFromEarthCenter, across a grid of sky positions/detectors/times including
 # near-pole and leap-second-boundary edge cases.
@@ -36,7 +36,7 @@ for (ga, la) in zip(gwdata_rows, lal_rows)
     reldiff = absdiff / max(abs(b), eps())
     global maxabs = max(maxabs, absdiff)
     global maxrel = max(maxrel, reldiff)
-    println("  det=$(ga[1]) ra=$(ga[2]) dec=$(ga[3]) gps=$(ga[4])  GWData=$a  lal=$b  abs_diff=$absdiff")
+    println("  det=$(ga[1]) ra=$(ga[2]) dec=$(ga[3]) gps=$(ga[4])  GravitationalWaveData=$a  lal=$b  abs_diff=$absdiff")
 end
 println()
 println("max absolute time-delay difference: $maxabs")

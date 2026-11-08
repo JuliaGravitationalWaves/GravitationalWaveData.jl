@@ -1,9 +1,9 @@
 # Shared helpers for the comparison drivers in this directory (see README.md).
 #
 # Every comparison runs as two separate Julia processes that exchange results through CSV
-# files: one in the GWData.jl project, one in this directory's reference project (PythonCall
+# files: one in the GravitationalWaveData.jl project, one in this directory's reference project (PythonCall
 # with gwpy and LALSuite's Python bindings from conda-forge). They must stay separate because
-# Julia's HDF5_jll (a GWData.jl dependency) and Python's h5py each ship a `libhdf5`, and loading
+# Julia's HDF5_jll (a GravitationalWaveData.jl dependency) and Python's h5py each ship a `libhdf5`, and loading
 # both into one process lets the wrong library's symbols win (an `undefined symbol` crash on
 # `import h5py`).
 
@@ -27,7 +27,7 @@ end
 """
     run_gwdata_step(script, args...)
 
-Run `script` (a file in this directory) in the GWData.jl project, passing `args` as `ARGS`.
+Run `script` (a file in this directory) in the GravitationalWaveData.jl project, passing `args` as `ARGS`.
 """
 function run_gwdata_step(script, args...)
     _ensure_instantiated(REPO_ROOT)
@@ -50,12 +50,12 @@ end
     gw150914_strain_path(ifo) -> String
 
 Local path of the GWOSC GW150914 strain file for detector `ifo` ("H1" or "L1"), downloaded into
-the GWData.jl cache on first use. Runs `fetch_open_data` in a GWData.jl subprocess, since the
+the GravitationalWaveData.jl cache on first use. Runs `fetch_open_data` in a GravitationalWaveData.jl subprocess, since the
 driver process itself loads neither project.
 """
 function gw150914_strain_path(ifo)
     _ensure_instantiated(REPO_ROOT)
-    code = "using GWData; print(fetch_open_data(ARGS[1], $GW150914_GPS_START, $GW150914_GPS_END))"
+    code = "using GravitationalWaveData; print(fetch_open_data(ARGS[1], $GW150914_GPS_START, $GW150914_GPS_END))"
     return readchomp(`$(_julia()) --project=$REPO_ROOT -e $code $ifo`)
 end
 

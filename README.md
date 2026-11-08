@@ -1,10 +1,10 @@
-# GWData.jl
-<img src="docs/src/assets/logo.svg" alt="GWData.jl logo" width="160" align="right">
+# GravitationalWaveData.jl
+<img src="docs/src/assets/logo.svg" alt="GravitationalWaveData.jl logo" width="160" align="right">
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://paulhopkins.github.io/GWData.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://paulhopkins.github.io/GWData.jl/dev/)
-[![Build Status](https://github.com/paulhopkins/GWData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/paulhopkins/GWData.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/paulhopkins/GWData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/paulhopkins/GWData.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/dev/)
+[![Build Status](https://github.com/JuliaGravitationalWaves/GravitationalWaveData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/JuliaGravitationalWaves/GravitationalWaveData.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/JuliaGravitationalWaves/GravitationalWaveData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaGravitationalWaves/GravitationalWaveData.jl)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 A Julia toolkit for gravitational-wave detector data: loading, conditioning, and
@@ -33,28 +33,29 @@ time-frequency analysis of strain time series, built on `DSP.jl` and `FFTW.jl`.
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/paulhopkins/GWData.jl")
+Pkg.add("GravitationalWaveData")
 ```
 
 ## Example
 
 ```julia
-using GWData
+using GravitationalWaveData
 
 path = fetch_open_data("H1", 1126256640, 1126256640 + 4096)   # GW150914 segment, cached
 strain, dq_mask = load_gwosc_strain(path)
 
 strain_asd = asd(strain; seglen=4 * 4096)                     # 4 s median-Welch segments
-white = bandpass(whiten(strain, strain_asd; highpass=20.0), 30.0, 400.0)
+white = whiten(strain, strain_asd; highpass=20.0)
+filtered = bandpass(white, 30.0, 400.0)
 
-seg = crop(strain, 1126259454.4, 1126259470.4)                # 16 s around the merger
+seg = crop(white, 1126259454.4, 1126259470.4)                 # 16 s around the merger
 scan, peak = q_transform(seg; frange=(20.0, 500.0))
-peak.time, peak.frequency, peak.snr
+peak.time, peak.frequency, peak.snr                           # 1126259462.42, 140.3 Hz, SNR 15.0
 ```
 
 ## Documentation
 
-The [documentation](https://paulhopkins.github.io/GWData.jl/dev/) has a tutorial for each
+The [documentation](https://juliagravitationalwaves.github.io/GravitationalWaveData.jl/stable/) has a tutorial for each
 module, ending in a reproduction of the GW150914 discovery figure. It also has a
 [conventions page](docs/CONVENTIONS.md) covering normalization and timing conventions,
 and the full API reference. To build it locally, run `julia --project=docs docs/make.jl`.
@@ -66,10 +67,10 @@ alongside interactive explorers for the Q-transform and filter design in both
 
 ## Data cache
 
-Downloaded files are kept as plain files under their upstream names in `~/.cache/gwdata/` (GWOSC
-strain in `strain/`, posterior-sample releases in `posteriors/`). Set `GWDATA_CACHE_DIR` to put the
-cache elsewhere; otherwise `$XDG_CACHE_HOME/gwdata` is used when `XDG_CACHE_HOME` is set.
-`gwdata_cache_dir()` returns the resolved path.
+Downloaded files are kept as plain files under their upstream names in `~/.cache/gravitationalwavedata/` (GWOSC
+strain in `strain/`, posterior-sample releases in `posteriors/`). Set `GRAVITATIONALWAVEDATA_CACHE_DIR` to put the
+cache elsewhere; otherwise `$XDG_CACHE_HOME/gravitationalwavedata` is used when `XDG_CACHE_HOME` is set.
+`gravitationalwavedata_cache_dir()` returns the resolved path.
 
 ## Validation
 

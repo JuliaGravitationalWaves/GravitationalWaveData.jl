@@ -1,6 +1,6 @@
 using Test
 using Dates
-using GWData
+using GravitationalWaveData
 
 @testset "GPSTime" begin
     @testset "epoch anchor" begin
@@ -43,7 +43,7 @@ using GWData
         # https://www.gw-openscience.org/eventapi/html/GWTC-1-confident/GW150914/, and LIGO's own
         # discovery-paper press materials) as GPS 1126259462.4 == 2015-09-14 09:50:45.4 UTC.
         # Independently cross-checked directly against `gwpy.time.tconvert(1126259462.4)`
-        # (the sibling LALSuite.jl repo's `examples/psd/.CondaPkg` env, read-only), which returns
+        # (in a conda gwpy environment), which returns
         # exactly `2015-09-14 09:50:45.400000+00:00` -- matches bit-for-bit.
         # At that date (after the 2015-07-01 leap second, before the next one on 2017-01-01),
         # GPS-UTC = 17s, so this is also a check on that specific historical offset.

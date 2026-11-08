@@ -2,13 +2,13 @@
 
 # A spectrogram shows how a signal's frequency content evolves over time: a sequence of
 # short-time Fourier transforms (STFTs), one per time bin, stacked side by side into a
-# time-frequency image. [`spectrogram`](@ref) (`src/GWData/Spectrogram.jl`) is a thin wrapper
+# time-frequency image. [`spectrogram`](@ref) (`src/GravitationalWaveData/Spectrogram.jl`) is a thin wrapper
 # around `DSP.spectrogram`: a raw, un-averaged STFT power spectrogram (no Welch/median averaging of
 # sub-segments within each column). This tutorial uses a short, heavily-overlapped FFT window to
 # resolve a short-duration transient, then shows why a transient this short can be invisible at the
 # wrong resolution.
 
-using GWData
+using GravitationalWaveData
 using Plots
 gr()
 
@@ -91,7 +91,7 @@ global_max, peak_freq, peak_time_from_merger
 
 # ## Zooming in around the merger
 #
-# GWData.jl doesn't yet provide a dedicated `crop` for `Spectrogram` the way it does for
+# GravitationalWaveData.jl doesn't yet provide a dedicated `crop` for `Spectrogram` the way it does for
 # `TimeSeries`/`FrequencySeries` (`docs/CONVENTIONS.md`), so we restrict both axes by hand, the
 # same half-open-window idea applied to a matrix instead of a vector:
 

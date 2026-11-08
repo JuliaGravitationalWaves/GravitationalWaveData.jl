@@ -24,13 +24,13 @@ end
 
 
 # ╔═╡ 41062102-aad6-11f1-ab39-85978b114f29
-using GWData, Plots, PlutoUI, Markdown, HypertextLiteral
+using GravitationalWaveData, Plots, PlutoUI, Markdown, HypertextLiteral
 
 # ╔═╡ 4105abd0-aad6-11f1-b0c9-99fcc22264bb
 md"""
 # Q-transform explorer
 
-Interactively explore GWData.jl's constant-Q transform ([`q_plane_transform`](@ref)) on the
+Interactively explore GravitationalWaveData.jl's constant-Q transform ([`q_plane_transform`](@ref)) on the
 GW150914 H1 segment. Adjust **Q**, the frequency search band (**frange**), and whether the
 segment is whitened first, and watch the time-frequency energy map (the "Q-scan"/"chirp plot")
 update live.
@@ -49,7 +49,7 @@ md"""
 ## Fetching real strain data
 
 The same standard GW150914 H1 segment the rest of this project's tutorials use, fetched live
-from GWOSC via [`fetch_open_data`](@ref) (cached locally under `~/.cache/gwdata/strain`, so
+from GWOSC via [`fetch_open_data`](@ref) (cached locally under `~/.cache/gravitationalwavedata/strain`, so
 re-running this notebook doesn't re-download the file). We crop to 16 s centered on the merger,
 same as `docs/literate/06_qtransform.jl`.
 """

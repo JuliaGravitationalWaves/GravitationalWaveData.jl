@@ -1,8 +1,8 @@
 # Data
 
 Local copies of public GWOSC data files used by the test suite. Everything in this directory
-except this file is gitignored. The tests also look in `ENV["GWDATA_TEST_DATA"]` and in the
-`fetch_open_data` cache (`~/.cache/gwdata/strain`); see `test/testdata.jl`. Tests whose files
+except this file is gitignored. The tests also look in `ENV["GRAVITATIONALWAVEDATA_TEST_DATA"]` and in the
+`fetch_open_data` cache (`~/.cache/gravitationalwavedata/strain`); see `test/testdata.jl`. Tests whose files
 are missing are skipped.
 
 Files used (all GW150914, GPS `1126256640`-`1126260736`, 4096 s, 4 kHz):

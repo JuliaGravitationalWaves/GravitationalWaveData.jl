@@ -1,9 +1,9 @@
-# Tests for published posterior-sample download and reading (GWData.Posteriors).
+# Tests for published posterior-sample download and reading (GravitationalWaveData.Posteriors).
 
 using HDF5
 using Statistics: median
-using GWData.GWOSC: _url_filename
-using GWData.Posteriors: _is_hdf5_url
+using GravitationalWaveData.GWOSC: _url_filename
+using GravitationalWaveData.Posteriors: _is_hdf5_url
 
 const GW150914_PE_RELEASE = "IGWN-GWTC2p1-v2-GW150914_095045_PEDataRelease_mixed_cosmo.h5"
 
@@ -40,7 +40,7 @@ end
 end
 
 @testset "Posteriors: real GW150914 GWTC-2.1 release" begin
-    path = joinpath(gwdata_cache_dir("posteriors"), GW150914_PE_RELEASE)
+    path = joinpath(gravitationalwavedata_cache_dir("posteriors"), GW150914_PE_RELEASE)
     if !isfile(path)
         @test_skip "GW150914 PE release not cached (run fetch_posterior_samples(\"GW150914\"))"
     else

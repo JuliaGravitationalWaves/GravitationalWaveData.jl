@@ -6,7 +6,7 @@
 # against the Advanced LIGO design-sensitivity curve to see how far a real, non-ideal detector sits
 # from its design goal.
 
-using GWData
+using GravitationalWaveData
 using Plots
 
 # ## Fetching data

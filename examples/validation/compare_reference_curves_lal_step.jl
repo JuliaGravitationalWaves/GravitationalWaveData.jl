@@ -2,7 +2,7 @@
 # Reference side of compare_reference_curves.jl (see README.md): writes
 # lalsimulation.SimNoisePSDaLIGOZeroDetHighPower and SimNoisePSDAdvVirgo over the same
 # frequency grid to a CSV. Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #
 # Usage: julia --project=examples/validation compare_reference_curves_lal_step.jl <out_csv> <f1> <f2> ...
 

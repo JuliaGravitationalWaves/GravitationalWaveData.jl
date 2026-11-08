@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
 # Reference side of compare_filtering.jl (see README.md): computes, with gwpy: Runs in this
-# directory's project and must not load GWData.
+# directory's project and must not load GravitationalWaveData.
 #   - an off-source ASD (median-Welch, same convention as compare_psd.jl) -> asd.csv, so the
-#     GWData step whitens against the *exact same* numbers and PSD-estimation differences
+#     GravitationalWaveData step whitens against the *exact same* numbers and PSD-estimation differences
 #     can't be confused with whitening-algorithm differences.
 #   - `.bandpass()`/`.highpass()`/`.lowpass()`, forced to `ftype="butter"` so both sides use
 #     the same filter *family* (gwpy's default is an auto-order Chebyshev-I via

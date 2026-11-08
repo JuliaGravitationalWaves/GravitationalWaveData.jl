@@ -6,16 +6,16 @@
 
 # ## Installation
 #
-# GWData.jl is not yet registered in Julia's General registry, so install it by URL:
+# GravitationalWaveData.jl is registered in Julia's General registry:
 #
 # ```julia
 # using Pkg
-# Pkg.add(url="https://github.com/paulhopkins/GWData.jl")
+# Pkg.add("GravitationalWaveData")
 # ```
 
 # ## Loading the package
 
-using GWData
+using GravitationalWaveData
 
 # ## Fetching real GW150914 strain data
 #
@@ -28,7 +28,7 @@ using GWData
 path = fetch_open_data("H1", 1126256640, 1126256640 + 4096)
 
 # The very first call downloads the file (a few hundred MB) into a local cache, by default
-# `~/.cache/gwdata/strain`; every subsequent call for the same detector/GPS range/sample rate
+# `~/.cache/gravitationalwavedata/strain`; every subsequent call for the same detector/GPS range/sample rate
 # is served straight from that cache without touching the network again, so re-running this
 # tutorial (or any other tutorial that reuses this same segment) is cheap after the first fetch.
 
@@ -83,7 +83,7 @@ zoom = crop(strain, merger_gps - 5, merger_gps + 5)
 #
 # `+`, `-`, `*`, and `/` all work elementwise. A `TimeSeries` combined with a plain number
 # broadcasts as expected; two `TimeSeries` can only be combined when they share the exact same
-# sample grid (same `dt`, `t0`, and length) — GWData.jl raises a specific `ArgumentError` naming
+# sample grid (same `dt`, `t0`, and length) — GravitationalWaveData.jl raises a specific `ArgumentError` naming
 # which of the three checks failed rather than silently producing a meaningless result, see
 # `docs/CONVENTIONS.md`.
 
@@ -97,7 +97,7 @@ difference == zoom
 # ## A first plot
 #
 # Loading a `RecipesBase`-backed plotting package (here `Plots.jl` with the `GR` backend) enables
-# a `plot` recipe for every GWData.jl series type directly — no extra glue code needed:
+# a `plot` recipe for every GravitationalWaveData.jl series type directly — no extra glue code needed:
 
 using Plots
 gr()
