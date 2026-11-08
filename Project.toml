@@ -1,6 +1,6 @@
 name = "GravitationalWaveData"
 uuid = "d4636edc-8908-4226-933a-005f27205ddf"
-license = "MIT"
+license = "GPL-3.0-or-later"
 version = "0.1.0"
 authors = ["Paul Hopkins <paul.hopkins256@gmail.com>"]
 description = "Gravitational-wave detector data toolkit: TimeSeries/FrequencySeries types, GWOSC and frame-file I/O, PSD/ASD estimation, filtering and whitening, spectrograms, Q-transforms, and detector response."
