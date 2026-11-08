@@ -118,7 +118,7 @@ size(sensitivity)   # (length(decs), length(ras)) -- rows=declination, columns=r
 
 p1 = heatmap(rad2deg.(ras), rad2deg.(decs), sensitivity;
              xlabel="Right ascension (deg)", ylabel="Declination (deg)",
-             title="H1 antenna sensitivity sqrt(F+^2 + Fx^2), psi=0, GPS=$(gps)",
+             title="H1 antenna sensitivity sqrt(F+^2 + Fx^2), psi=0, GPS 1126259462.4",
              color=:viridis, colorbar_title="sensitivity");
 
 # The bright lobes are sky directions H1 is most sensitive to for this polarization angle; the dark
@@ -192,6 +192,6 @@ delays = Dict(
 
 p2 = plot(rad2deg.(ras), delays["H1"]; label="H1", xlabel="Right ascension (deg)",
           ylabel="Time delay from geocenter (ms)",
-          title="Geocenter time delay along the celestial equator (dec=0), GPS=$(gps)")
+          title="Geocenter time delay along the celestial equator (dec=0), GPS 1126259462.4")
 plot!(p2, rad2deg.(ras), delays["L1"]; label="L1", ylabel="Time delay from geocenter (ms)")
 plot!(p2, rad2deg.(ras), delays["V1"]; label="V1", ylabel="Time delay from geocenter (ms)")
