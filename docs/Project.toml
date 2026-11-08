@@ -13,6 +13,7 @@ GravitationalWaveData = {path = ".."}
 
 [compat]
 Documenter = "1"
+GR = "0.73.27"
 Literate = "2"
 Plots = "1"
 Pluto = "1"
