@@ -27,36 +27,36 @@ gr()
 # build, notably [Coherence & CSD](09_coherence.md), which also uses this H1/L1 pair):
 
 gps_start, gps_end = 1126256640, 1126260736
-gps_merger = 1126259462.4   # GW150914 merger GPS time
+gps_event = 1126259462.4    # GW150914's GPS time as catalogued, to 0.1 s
 
 h1_path = fetch_open_data("H1", gps_start, gps_end)
 l1_path = fetch_open_data("L1", gps_start, gps_end)
 h1_full, _ = load_gwosc_strain(h1_path)
 l1_full, _ = load_gwosc_strain(l1_path)
 
-# As the [Coherence & CSD](09_coherence.md) tutorial and `docs/CONVENTIONS.md` both note, this
-# particular L1 file has a real `NaN` gap in its first ~190 s (pre-lock data, well before
-# GW150914). [`whiten`](@ref) mean-detrends its *entire* input in one pass -- a single `NaN`
-# anywhere in that input poisons the mean, and hence every output sample, not just the samples
-# near the gap. GW150914's merger sits about 2822 s into this segment, far past the gap itself, so
-# the fix is simply to [`crop`](@ref) down to a window around the merger *before* whitening,
-# rather than whitening the full 4096 s series the way the single-detector
+# As the [Coherence & CSD](09_coherence.md) tutorial notes, this particular L1 file has a real
+# `NaN` gap in its first ~190 s (well before GW150914). [`whiten`](@ref) mean-detrends its *entire*
+# input in one pass, so a single `NaN` anywhere in that input poisons every output sample, not just
+# the samples near the gap. GW150914 sits about 2822 s into this segment, far past the gap, so the
+# fix is simply to [`crop`](@ref) down to a window around the event *before* whitening, rather than
+# whitening the full 4096 s series the way the single-detector
 # [Filtering & Whitening](03_filtering_whitening.md) tutorial does for H1 (whose file has no such
-# gap). ASD estimation is unaffected: `asd`'s median-Welch averaging (see `docs/CONVENTIONS.md`)
-# only needs *more than half* of a given frequency bin's segments to be finite to return a clean
-# result, and the gap contaminates well under 5% of segments here, so it's safe to estimate each
-# detector's ASD from the full raw file:
+# gap). For L1's ASD we also start after the gap. [`asd`](@ref) would otherwise leave out the
+# affected segments itself, with a warning:
+
+l1_clean = crop(l1_full, gps_start + 200.0, gps_end)
+count(isnan, l1_clean.data)   # 0: the crop cleared the gap
 
 seglen = round(Int, 4 * sample_rate(h1_full))   # 4 s Welch segments, matching 03/09's convention
 h1_asd = asd(h1_full; seglen=seglen)
-l1_asd = asd(l1_full; seglen=seglen)
+l1_asd = asd(l1_clean; seglen=seglen)
 
-# Now crop both detectors to the same 16 s window around the merger -- the same window
+# Now crop both detectors to the same 16 s window around the event -- the same window
 # [Q-transform](06_qtransform.md) uses -- which conveniently sits nowhere near L1's gap:
 
 seg_pad = 8.0
-h1_seg = crop(h1_full, gps_merger - seg_pad, gps_merger + seg_pad)
-l1_seg = crop(l1_full, gps_merger - seg_pad, gps_merger + seg_pad)
+h1_seg = crop(h1_full, gps_event - seg_pad, gps_event + seg_pad)
+l1_seg = crop(l1_full, gps_event - seg_pad, gps_event + seg_pad)
 
 count(isnan, h1_seg.data), count(isnan, l1_seg.data)   # (0, 0) -- confirms the crop cleared the gap
 
@@ -86,17 +86,17 @@ l1_aligned = TimeSeries(-1 .* l1_chirp.data, l1_chirp.t0 + 0.0069, l1_chirp.dt; 
 #
 # [`q_transform`](@ref) works on the *un-whitened* 16 s crop directly (it computes its own
 # normalized FFT internally -- see [Q-transform](06_qtransform.md) for why whitening isn't wired
-# into it), restricted to the same 20-500 Hz band and merger-straddling peak search that tutorial
+# into it), restricted to the same 20-500 Hz band and event-straddling peak search that tutorial
 # uses, run once per detector:
 
 h1_scan, h1_peak = q_transform(h1_seg; frange=(20.0, 500.0),
-                                search=(gps_merger - 0.2, gps_merger + 0.1))
+                                search=(gps_event - 0.2, gps_event + 0.1))
 l1_scan, l1_peak = q_transform(l1_seg; frange=(20.0, 500.0),
-                                search=(gps_merger - 0.2, gps_merger + 0.1))
-(h1_peak.time - gps_merger, h1_peak.frequency, h1_peak.q), (l1_peak.time - gps_merger, l1_peak.frequency, l1_peak.q)
+                                search=(gps_event - 0.2, gps_event + 0.1))
+(h1_peak.time - gps_event, h1_peak.frequency, h1_peak.q), (l1_peak.time - gps_event, l1_peak.frequency, l1_peak.q)
 
-# Each detector's Q-search independently locks onto a tile within milliseconds of the known merger
-# time, at a similar Q -- a good cross-detector sanity check that this isn't a single-channel
+# Each detector's Q-search independently locks onto a tile a few tens of milliseconds after
+# `gps_event`, at a similar Q -- a good cross-detector sanity check that this isn't a single-channel
 # fluke. The peak times aren't expected to reproduce the literature's 6.9 ms inter-site delay to
 # high precision here (each Q-plane row has its own, fairly coarse, time sampling -- see
 # [`QScan`](@ref)'s docstring), but they land in the same few-millisecond ballpark:
@@ -128,41 +128,45 @@ function qscan_grid(scan, tlo, thi; ntime=400)
     return collect(common_times), freqs, z
 end
 
-zoom_lo, zoom_hi = gps_merger - 0.15, gps_merger + 0.05
+zoom_lo, zoom_hi = gps_event - 0.15, gps_event + 0.05
 
 h1_grid_times, h1_freqs, h1_energy = qscan_grid(h1_scan, zoom_lo, zoom_hi)
 l1_grid_times, l1_freqs, l1_energy = qscan_grid(l1_scan, zoom_lo, zoom_hi)
-h1_grid_rel = h1_grid_times .- gps_merger
-l1_grid_rel = l1_grid_times .- gps_merger;
+h1_grid_rel = h1_grid_times .- gps_event
+l1_grid_rel = l1_grid_times .- gps_event;
 
 # ## The combined figure
 #
-# Three panels, each built as its own `Plot` object and suppressed with a trailing `;` so it isn't
+# The time axes count from `gps_event`, which is a catalogue time rounded to 0.1 s rather than the
+# moment of peak strain, so the loudest part of the signal arrives a little after zero. Three panels,
+# each built as its own `Plot` object and suppressed with a trailing `;` so it isn't
 # displayed on its own (per the Documenter `@example`-block duplicate-render trap -- see the
 # [Plotting Recipes](11_plotting_recipes.md) tutorial), then composed with `layout=(3, 1)`: the
 # whitened-and-bandpassed time-domain chirp for both detectors on top, each detector's own
 # Q-transform time-frequency track below it -- echoing Figure 1 of Abbott et al. (2016).
 
+time_label = "Time from GPS 1126259462.4 (s)"
+
 h1_zoom = crop(h1_chirp, zoom_lo, zoom_hi)
 l1_zoom = crop(l1_aligned, zoom_lo, zoom_hi)
-h1_zoom_rel = collect(times(h1_zoom)) .- gps_merger
-l1_zoom_rel = collect(times(l1_zoom)) .- gps_merger
+h1_zoom_rel = collect(times(h1_zoom)) .- gps_event
+l1_zoom_rel = collect(times(l1_zoom)) .- gps_event
 
 p_chirp = plot(h1_zoom_rel, h1_zoom.data;
-               xlabel="Time from merger (s)", ylabel="Whitened strain", label="H1",
+               xlabel=time_label, ylabel="Whitened strain", label="H1",
                color=:black, linewidth=1.5,
                title="GW150914: whitened + bandpassed strain (30-400 Hz)");
 plot!(p_chirp, l1_zoom_rel, l1_zoom.data;
-      xlabel="Time from merger (s)", ylabel="Whitened strain",
+      xlabel=time_label, ylabel="Whitened strain",
       label="L1 (shifted 6.9 ms, inverted)", color=:red, linewidth=1.5);
 
 p_h1q = heatmap(h1_grid_rel, h1_freqs, h1_energy;
-                 xlabel="Time from merger (s)", ylabel="Frequency (Hz)", yscale=:log10,
+                 xlabel=time_label, ylabel="Frequency (Hz)", yscale=:log10, yticks=([32, 64, 128, 256], ["32", "64", "128", "256"]),
                  colorbar_title="Normalized energy", color=:viridis,
                  title="H1 Q-transform (Q=$(round(h1_peak.q; digits=2)))");
 
 p_l1q = heatmap(l1_grid_rel, l1_freqs, l1_energy;
-                 xlabel="Time from merger (s)", ylabel="Frequency (Hz)", yscale=:log10,
+                 xlabel=time_label, ylabel="Frequency (Hz)", yscale=:log10, yticks=([32, 64, 128, 256], ["32", "64", "128", "256"]),
                  colorbar_title="Normalized energy", color=:viridis,
                  title="L1 Q-transform (Q=$(round(l1_peak.q; digits=2)))");
 
@@ -172,8 +176,8 @@ plot(p_chirp, p_h1q, p_l1q; layout=(3, 1), size=(750, 950))
 # [Filtering & Whitening](03_filtering_whitening.md) tutorial found in H1 alone, now visibly
 # consistent between two independent, geographically separated detectors once L1's arrival-time
 # offset and inverted orientation are accounted for. The two bottom panels show the same event as
-# an upward-sweeping time-frequency track in each detector's own Q-transform, peaking within
-# milliseconds of the same merger time found in the time domain. Two independent detectors,
+# an upward-sweeping time-frequency track in each detector's own Q-transform, peaking close to the
+# same time as the strain does in the top panel. Two independent detectors,
 # independently analyzed with two independent techniques (whitened time-domain filtering and a
 # constant-Q time-frequency transform), agreeing on the same transient at the same GPS time is
 # exactly the kind of consistency check that turned GW150914 from "an interesting blip" into the

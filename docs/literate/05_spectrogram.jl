@@ -116,7 +116,7 @@ size(zoomed)
 
 rel_times = collect(times(zoomed)) .- gps_merger
 heatmap(rel_times, collect(frequencies(zoomed)), zoomed.data;
-        xlabel="Time from merger (s)", ylabel="Frequency (Hz)",
+        xlabel="Time from GPS 1126259462.4 (s)", ylabel="Frequency (Hz)",
         colorbar_scale=:log10, colorbar_title="Whitened strain ASD",
         title="H1 spectrogram around GW150914 (zoomed)", color=:viridis)
 #-

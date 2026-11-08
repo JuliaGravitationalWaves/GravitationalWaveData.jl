@@ -11,6 +11,9 @@ using GravitationalWaveData
 Base.showable(::MIME"text/html", ::Plots.Plot{Plots.GRBackend}) = false
 Base.showable(::MIME"image/svg+xml", ::Plots.Plot{Plots.GRBackend}) = false
 
+# Long plot titles overflow the default 600 px figure at Plots.jl's default title size.
+Plots.default(titlefontsize=10)
+
 const DOCS_SRC = joinpath(@__DIR__, "src")
 const LITERATE_DIR = joinpath(@__DIR__, "literate")
 const GENERATED_DIR = joinpath(DOCS_SRC, "generated")

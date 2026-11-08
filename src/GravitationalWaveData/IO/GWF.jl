@@ -6,7 +6,7 @@ using CodecZlib
 using ..Types: TimeSeries
 
 # ================================================================================================
-# Pure-Julia reader for LIGO/Virgo's native IGWD frame ("GWF") binary format, per LIGO-T970130-v2
+# Reader for LIGO/Virgo's native IGWD frame ("GWF") binary format, per LIGO-T970130-v2
 # ("Specification of a Common Data Frame Format for Interferometric Gravitational Wave Detectors").
 #
 # Layout was cross-checked byte-for-byte against a real GWOSC frame file (see

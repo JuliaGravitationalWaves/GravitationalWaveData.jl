@@ -37,7 +37,7 @@ strain, dq_mask = load_gwosc_strain(path)
 raw_rel = collect(times(strain)) .- gps_merger
 raw_mask = abs.(raw_rel) .<= 0.5
 plot(raw_rel[raw_mask], strain.data[raw_mask];
-     xlabel="Time from merger (s)", ylabel="Amplitude (strain)", label="H1 raw strain")
+     xlabel="Time from GPS 1126259462.4 (s)", ylabel="Amplitude (strain)", label="H1 raw strain")
 #-
 
 # ## Band-limiting and notch filters
@@ -83,7 +83,7 @@ conditioned = bandpass(conditioned, 50.0, 250.0)
 cond_zoom = crop(conditioned, gps_merger - 0.3, gps_merger + 0.3)
 cond_rel = collect(times(cond_zoom)) .- gps_merger
 plot(cond_rel, cond_zoom.data;
-     xlabel="Time from merger (s)", ylabel="Amplitude (strain)",
+     xlabel="Time from GPS 1126259462.4 (s)", ylabel="Amplitude (strain)",
      label="H1, 50-250 Hz bandpass + notches")
 #-
 
@@ -107,7 +107,7 @@ white = whiten(strain, asd_est; highpass=20.0)
 white_rel = collect(times(strain)) .- gps_merger
 white_mask = abs.(white_rel) .<= 0.5
 plot(white_rel[white_mask], white.data[white_mask];
-     xlabel="Time from merger (s)", ylabel="Whitened strain", label="H1 whitened")
+     xlabel="Time from GPS 1126259462.4 (s)", ylabel="Whitened strain", label="H1 whitened")
 #-
 
 # On stationary Gaussian noise, [`whiten`](@ref) normalizes to zero mean and unit variance --
@@ -129,7 +129,7 @@ chirp_zoom = crop(bp_white, gps_merger - 0.15, gps_merger + 0.05)
 
 chirp_rel = collect(times(chirp_zoom)) .- gps_merger
 plot(chirp_rel, chirp_zoom.data;
-     xlabel="Time from merger (s)", ylabel="Whitened strain",
+     xlabel="Time from GPS 1126259462.4 (s)", ylabel="Whitened strain",
      title="GW150914, H1 (30-400 Hz bandpass + whiten)", legend=false, linewidth=1.5)
 #-
 
