@@ -79,3 +79,7 @@ Q-transform are numerically cross-checked against `gwpy`/`scipy`. Sidereal time,
 response, time delays and reference curves are checked against LALSuite. The measured
 agreement is listed in the conventions page, and the comparison scripts are in
 [`examples/validation/`](examples/validation/).
+
+## License
+
+GPL-3.0-or-later. Parts of the package are ports of GWpy and LALSuite, see [NOTICE.md](NOTICE.md).
