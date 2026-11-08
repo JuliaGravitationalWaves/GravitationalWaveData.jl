@@ -13,6 +13,7 @@ GravitationalWaveData = {path = ".."}
 
 [compat]
 Documenter = "1"
+HypertextLiteral = "1.0.0"
 Literate = "2"
 Plots = "1"
 Pluto = "1"
