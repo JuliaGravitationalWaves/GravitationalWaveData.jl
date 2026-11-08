@@ -170,7 +170,7 @@ p_l1q = heatmap(l1_grid_rel, l1_freqs, l1_energy;
                  colorbar_title="Normalized energy", color=:viridis,
                  title="L1 Q-transform (Q=$(round(l1_peak.q; digits=2)))");
 
-plot(p_chirp, p_h1q, p_l1q; layout=(3, 1), size=(750, 950))
+plot(p_chirp, p_h1q, p_l1q; layout=(3, 1), size=(750, 950), left_margin=5Plots.mm)
 
 # The top panel shows the same rising-amplitude, rising-frequency "chirp" the
 # [Filtering & Whitening](03_filtering_whitening.md) tutorial found in H1 alone, now visibly

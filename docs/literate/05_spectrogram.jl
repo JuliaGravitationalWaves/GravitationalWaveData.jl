@@ -4,9 +4,8 @@
 # short-time Fourier transforms (STFTs), one per time bin, stacked side by side into a
 # time-frequency image. [`spectrogram`](@ref) (`src/GravitationalWaveData/Spectrogram.jl`) is a thin wrapper
 # around `DSP.spectrogram`: a raw, un-averaged STFT power spectrogram (no Welch/median averaging of
-# sub-segments within each column). This tutorial uses a short, heavily-overlapped FFT window to
-# resolve a short-duration transient, then shows why a transient this short can be invisible at the
-# wrong resolution.
+# sub-segments within each column). This tutorial looks at GW150914 first across a 32 s window, then
+# with a shorter FFT window zoomed in on the signal itself.
 
 using GravitationalWaveData
 using Plots
@@ -39,61 +38,53 @@ white = whiten(strain, asd_est; highpass=20.0);
 
 seg = crop(white, gps_merger - 16, gps_merger + 16)
 
-# ## An over-dense STFT spectrogram
-#
-# We use a very short, heavily-overlapped FFT window -- 1/16 s segments overlapping by 15/16 -- to
-# over-sample the frequency content and give a short transient a chance to stand out. In samples at
-# H1's 4096 Hz sample rate, that's an `n=256`-sample segment with `noverlap=240` (a ~94% overlap
-# between consecutive segments, well above `spectrogram`'s own 50%-overlap default):
-
-n = 256          # 1/16 s at 4096 Hz
-noverlap = 240   # 15/16 = ~94% overlap
-
-spec = spectrogram(seg; n=n, noverlap=noverlap)
-size(spec)   # (nfreq bins, ntime bins)
-
-# `spectrogram` returns power; we take its square root to get a more familiar amplitude spectral
-# density scale before plotting, building a new [`Spectrogram`](@ref) from the square-rooted data
-# (the axis metadata -- `t0`, `dt`, `f0`, `df` -- is unchanged by this, only the values):
-
-spec_asd = Spectrogram(sqrt.(spec.data), spec.t0, spec.dt, spec.f0, spec.df;
-                        name="Whitened strain ASD")
-
 # ## A first, full-window look
 #
-# The [`Spectrogram`](@ref) plot recipe defaults to a heatmap with a log-scaled colorbar --
-# appropriate here since STFT power spans many orders of magnitude across frequency. We restrict
-# the frequency axis to `20-1024 Hz` (below 20 Hz is already hard-zeroed by whitening's own
-# highpass; above ~1 kHz there's nothing of astrophysical interest for GW150914):
+# We use 1/8 s segments overlapping by 3/4. In samples at H1's 4096 Hz sample rate, that's an
+# `n=512`-sample segment with `noverlap=384`, giving a column every 1/32 s. Much more overlap than
+# this adds nothing to a 32 s picture: a figure this size is about 450 pixels across, so it could not
+# draw thousands of columns anyway.
 
-plot(spec_asd; title="H1, whitened, over-dense spectrogram (32 s around GW150914)",
-     ylim=(20, 1024))
+spec = spectrogram(seg; n=512, noverlap=384, name="Whitened strain power")
+size(spec)   # (nfreq bins, ntime bins)
+
+# The [`Spectrogram`](@ref) plot recipe defaults to a heatmap of power in dB, with color limits at the
+# 1st and 99.9th percentiles so that a few extreme pixels don't wash out the rest. We restrict the
+# frequency axis to `20-512 Hz` (below 20 Hz is already hard-zeroed by whitening's own highpass, and
+# GW150914 has little power above a few hundred Hz):
+
+plot(spec; title="H1, whitened spectrogram (32 s around GW150914)", ylim=(20, 512))
 #-
 
-# GW150914's chirp lasts well under a second, out of the 32 s plotted above -- so before drawing
-# any conclusion from squinting at the image, it's worth checking numerically whether there's
-# actually anything to see. There is: the single loudest pixel in this entire 32 s, `size(spec, 2)`
-# = 8177-time-bin spectrogram sits almost exactly at the merger GPS time:
+# Most of this image is noise. The bright horizontal band near 60 Hz is a narrow instrumental line
+# that whitening against a 4 s ASD has not fully removed; lines like this are the tall peaks in the
+# PSD & ASD tutorial's plots. GW150914 is the faint vertical streak at about 22 s on this axis, and
+# since its chirp lasts well under a second out of the 32 s plotted, it's worth checking numerically
+# that the streak is real. The loudest pixel below 512 Hz, away from the even louder instrumental lines
+# near 1 kHz, sits almost exactly at the merger GPS time:
 
-global_max, global_idx = findmax(spec_asd.data)
-peak_freq = frequencies(spec_asd)[global_idx[1]]
-peak_time_from_merger = times(spec_asd)[global_idx[2]] - gps_merger
+band = frequencies(spec) .<= 512
+global_max, global_idx = findmax(spec.data[band, :])
+peak_freq = frequencies(spec)[global_idx[1]]
+peak_time_from_merger = times(spec)[global_idx[2]] - gps_merger
 global_max, peak_freq, peak_time_from_merger
 
-# That confirms the transient really is there, and roughly where physics says it should be
-# (GW150914's merger frequency is close to that ~64 Hz bin). But at the full 32 s width plotted
-# above, that one bright column is a needle in a haystack of ~8000 columns -- easy to miss entirely
-# by eye: at this resolution and dynamic range, a signal this short is practically invisible. The
-# Q-transform tutorial (`06_qtransform`) is specifically the better tool for finding a sub-second
+# The Q-transform tutorial (`06_qtransform`) is specifically the better tool for finding a sub-second
 # transient like this -- it adapts its time/frequency resolution per frequency rather than using one
 # fixed STFT window throughout. Here, we can still get a fair look at it with a plain spectrogram by
 # zooming in.
 
 # ## Zooming in around the merger
 #
+# The chirp is much shorter than 1/8 s, so the zoomed view needs a shorter segment: `n=256` (1/16 s)
+# with `noverlap=240`, a column every 1/256 s. Padding each segment to `nfft=1024` samples doesn't
+# add frequency resolution, but draws the same information on a finer 4 Hz grid.
+#
 # GravitationalWaveData.jl doesn't yet provide a dedicated `crop` for `Spectrogram` the way it does for
 # `TimeSeries`/`FrequencySeries` (`docs/CONVENTIONS.md`), so we restrict both axes by hand, the
 # same half-open-window idea applied to a matrix instead of a vector:
+
+fine = spectrogram(seg; n=256, noverlap=240, nfft=1024, name="Whitened strain power")
 
 function crop_spectrogram(s::Spectrogram, t_range, f_range)
     tvals = collect(times(s))
@@ -104,40 +95,32 @@ function crop_spectrogram(s::Spectrogram, t_range, f_range)
                         name=s.name)
 end
 
-zoomed = crop_spectrogram(spec_asd, (gps_merger - 0.15, gps_merger + 0.05), (20.0, 400.0))
+zoomed = crop_spectrogram(fine, (gps_merger - 0.15, gps_merger + 0.05), (20.0, 400.0))
 size(zoomed)
 
 # Restricting the data itself (not just the plotted axis limits) also tightens the color scale to
 # the range that actually matters here, rather than one set by the 32 s window's overall extremes.
-# The [`Spectrogram`](@ref) recipe always plots absolute GPS time; for a ~0.2 s window we'd rather
-# read the axis relative to the merger, so we call `heatmap` directly instead of going through the
-# recipe (the same `(freq, time)` row/column order `Spectrogram` stores, and the same
-# `colorbar_scale`/`colorbar_title` attributes the recipe sets, just spelled out by hand):
+# For a window this short we pass `epoch`, which plots time relative to the given GPS time:
 
-rel_times = collect(times(zoomed)) .- gps_merger
-heatmap(rel_times, collect(frequencies(zoomed)), zoomed.data;
-        xlabel="Time from GPS 1126259462.4 (s)", ylabel="Frequency (Hz)",
-        colorbar_scale=:log10, colorbar_title="Whitened strain ASD",
-        title="H1 spectrogram around GW150914 (zoomed)", color=:viridis)
+plot(zoomed; epoch=gps_merger, title="H1 spectrogram around GW150914 (zoomed)")
 #-
 
 # ## What this actually shows
 #
-# Zoomed in like this, a rising streak is visible by eye: power climbs from around 32 Hz roughly
-# 0.1 s before the merger, up through the 60-150 Hz band right around the merger GPS time, then
-# fades within another ~0.03 s -- the classic inspiral-merger-ringdown shape of a binary black hole
-# coalescence, and broadly consistent with GW150914's actual reported peak frequency (around 150
-# Hz). We can quantify the contrast against the background rather than just eyeballing it: comparing
-# the same global peak found above to the whole spectrogram's typical (median) pixel value,
+# Zoomed in like this, a rising streak is clear by eye: power climbs from around 32 Hz roughly
+# 0.1 s before the merger time, passes about 60 Hz at that time, reaches about 150 Hz some 25 ms
+# later, then fades within another ~20 ms -- the classic inspiral-merger-ringdown shape of a binary
+# black hole coalescence, and broadly consistent with GW150914's actual reported peak frequency
+# (around 150 Hz). We can quantify the contrast against the background rather than just eyeballing it,
+# comparing the peak found above to the 32 s spectrogram's typical (median) pixel value, in dB:
 
-background_level = sort(vec(spec_asd.data))[length(spec_asd.data) ÷ 2]
-global_max, background_level, global_max / background_level
+background_level = sort(vec(spec.data))[length(spec.data) ÷ 2]
+global_max, background_level, 10 * log10(global_max / background_level)
 
-# the peak is roughly an order of magnitude above the typical background pixel -- a real, if modest,
-# excursion, not an artifact of the color scale. That said, this is a much less dramatic picture
-# than the sharp, high-contrast chirp track a matched-filter-style time-frequency method produces: a
-# fixed-window STFT (even a heavily-overlapped one like this) trades time resolution against
-# frequency resolution the same way at every frequency, whereas GW150914's chirp sweeps through
+# The peak is roughly 19 dB above the typical background pixel, a real excursion and not an artifact
+# of the color scale. That said, this is a less sharp picture than a multi-resolution method
+# produces: a fixed-window STFT (even a heavily-overlapped one like this) trades time resolution
+# against frequency resolution the same way at every frequency, whereas GW150914's chirp sweeps through
 # several octaves in a fraction of a second -- exactly the regime where a fixed-resolution STFT
 # struggles and a multi-resolution method doesn't. See the Q-transform tutorial (`06_qtransform`)
 # for that sharper, purpose-built view of the same GW150914 chirp.

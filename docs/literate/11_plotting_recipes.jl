@@ -44,22 +44,27 @@ asd_band = crop(h1_asd, 10.0, 2000.0)
 
 # A [`spectrogram`](@ref) of a 16 s window around the merger for the [`Spectrogram`](@ref)
 # examples (the full 4096 s segment would make for a very wide, slow-to-render heatmap; 16 s is
-# enough to see structure without the cost):
+# enough to see structure without the cost). We whiten first, as in the Spectrogram tutorial, since
+# otherwise low-frequency noise and narrow instrumental lines dominate the image, and use 1/8 s
+# segments, short enough to resolve GW150914 as a streak:
 
-spec_zoom = crop(strain, merger_gps - 8, merger_gps + 8)
-spec = spectrogram(spec_zoom)
+strain_16s = crop(strain, merger_gps - 8, merger_gps + 8)
+white_16s = crop(whiten(strain, h1_asd; highpass=20.0), merger_gps - 8, merger_gps + 8)
+spec = spectrogram(white_16s; n=512, noverlap=448, name="Whitened strain power")
 
 # ## 1. Plain defaults
 #
 # With no keyword arguments at all, each recipe's own defaults apply. Reading
 # `ext/GravitationalWaveDataRecipesBaseExt.jl`:
 #
-# - **`TimeSeries`**: `seriestype --> :path`, linear-linear axes, `xlabel --> "GPS Time (s)"`,
-#   `ylabel --> "Amplitude"`, `label` taken from `ts.name` if set.
+# - **`TimeSeries`**: `seriestype --> :path`, linear-linear axes, `ylabel --> "Amplitude"`, `label`
+#   taken from `ts.name` if set. The x data is absolute GPS time, but ten-digit tick labels would
+#   collide, so ticks count from a round epoch named in the x label.
 # - **`FrequencySeries`**: `seriestype --> :path`, but `xscale --> :log10` and `yscale --> :log10`
 #   — the near-universal convention for PSD/ASD-shaped curves in GW data analysis.
-# - **`Spectrogram`**: `seriestype --> :heatmap`, x = GPS time, y = frequency, color = power, with
-#   `colorbar_scale --> :log10` since raw STFT power spans many orders of magnitude.
+# - **`Spectrogram`**: `seriestype --> :heatmap`, with the same time axis, y = frequency, and color =
+#   power in dB, with `clims` at the 1st and 99.9th percentiles so that a few extreme pixels don't
+#   set the color range.
 
 plot(zoom)
 
@@ -69,7 +74,7 @@ plot(asd_band)
 
 #-
 
-plot(spec)
+plot(spec; ylim=(20, 512))
 
 # ## 2. Overriding recipe defaults
 #
@@ -77,7 +82,7 @@ plot(spec)
 # means "use this value **unless** the caller already supplied one for this same keyword in this
 # same call" — it's a default, not a fixed choice. `:=` (which none of these three recipes use)
 # would instead force the value regardless of what the caller passes, which is exactly why none of
-# `xlabel`, `ylabel`, `seriestype`, `xscale`/`yscale`, or `colorbar_scale` is fixed with it: nothing
+# `xlabel`, `ylabel`, `seriestype`, `xscale`/`yscale`, or `clims` is fixed with it: nothing
 # about a `TimeSeries`/`FrequencySeries`/`Spectrogram`'s own correctness depends on a particular
 # color, label, or even (for `FrequencySeries`) a log-scaled axis — a caller with a linearly-scaled
 # quantity stored in a `FrequencySeries` (like coherence, see the Coherence & CSD tutorial) needs to
@@ -105,8 +110,27 @@ plot(asd_band; color=:navy, linewidth=1.5, title="H1 measured ASD",
 
 #-
 
-plot(spec; color=:plasma, colorbar_scale=:identity,
-     title="H1 spectrogram around GW150914 (linear color scale, plasma)")
+# Passing `colorbar_scale` plots raw power on that scale instead of dB, which here leaves only the
+# loudest pixels standing out. The title says what the colors are instead of `colorbar_title`, since
+# Plots.jl's GR backend draws the colorbar title at a fixed position that would overlap labels this
+# wide:
+
+plot(spec; color=:plasma, colorbar_scale=:identity, colorbar_title="", ylim=(20, 512),
+     title="H1 whitened strain power around GW150914 (linear color scale, plasma)")
+
+#-
+
+# ### Time relative to an event
+#
+# `epoch` plots time relative to a GPS time of your choosing, for either a [`TimeSeries`](@ref) or a
+# [`Spectrogram`](@ref). Windows under a few seconds need it for a [`Spectrogram`](@ref), because GR
+# lacks the precision to draw a sub-second window at absolute GPS coordinates and loses the colorbar's
+# color gradient. Everything on the same axes must then use the same origin, here including the line at
+# zero:
+
+p_epoch = plot(white_16s; epoch=merger_gps, xlim=(-0.2, 0.1), color=:black, label="H1",
+               ylabel="Whitened strain", title="H1 around GW150914")
+vline!(p_epoch, [0.0]; color=:red, linestyle=:dash, linewidth=1.5, label="GPS 1126259462.4")
 
 # ### The `plot!()` overlay gotcha
 #
@@ -145,14 +169,14 @@ p_freq = plot(asd_band; color=:navy, ylabel="Strain ASD (1/sqrt(Hz))",
 # the Documenter `@example`-block duplicate-render trap, each panel would render once here on its
 # own *and* again inside the combined figure below.)
 
-plot(p_time, p_freq; layout=(2, 1), size=(700, 600))
+plot(p_time, p_freq; layout=(2, 1), size=(700, 600), left_margin=5Plots.mm)
 
 # A third panel (the spectrogram) composes the same way — `layout=(3, 1)` stacks all three, time
 # domain, frequency domain, and time-frequency, for the same 16 s window used above:
 
-p_spec = plot(spec; title="H1 spectrogram (time-frequency domain)");
-plot(plot(spec_zoom; color=:black, ylabel="Strain", title="H1 strain (time domain)", label="H1"),
-     p_freq, p_spec; layout=(3, 1), size=(700, 850))
+p_spec = plot(spec; ylim=(20, 512), title="H1 whitened spectrogram (time-frequency domain)");
+plot(plot(strain_16s; color=:black, ylabel="Strain", title="H1 strain (time domain)", label="H1"),
+     p_freq, p_spec; layout=(3, 1), size=(700, 850), left_margin=5Plots.mm)
 
 # ## 4. Composing with plain `Plots.jl` primitives
 #

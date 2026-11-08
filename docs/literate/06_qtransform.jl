@@ -100,6 +100,7 @@ rel_times = grid_times .- gps_merger;
 
 heatmap(rel_times, grid_freqs, energy_grid;
         xlabel="Time from GPS 1126259462.4 (s)", ylabel="Frequency (Hz)", yscale=:log10,
+        yticks=([32, 64, 128, 256], ["32", "64", "128", "256"]),
         colorbar_title="Normalized energy", color=:viridis,
         title="H1 Q-transform, GW150914 (Q=$(round(peak.q; digits=2)))")
 #-
